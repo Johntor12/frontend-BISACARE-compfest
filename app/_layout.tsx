@@ -1,15 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import "react-native-reanimated";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from "@/hooks/useColorScheme";
+
+interface AppHeaderProps {
+  username: string;
+}
+
+function AppHeader({ username }: AppHeaderProps) {
+  return (
+    <View style={styles.header}>
+      <Text style={styles.greeting}>Hi, {username} 👋</Text>
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   if (!loaded) {
@@ -18,12 +35,34 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <AppHeader username="Deira Aisya" />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="screen"
+          options={{
+            title: "Screen",
+            header: () => null, // Menonaktifkan header sama sekali
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    paddingTop: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 16,
+    backgroundColor: "#DEF3FF",
+  },
+  greeting: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#0391CE",
+  },
+});
