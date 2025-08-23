@@ -1,0 +1,22 @@
+export default {
+  primary: "#0391CE",
+  primaryBlue700:"#005D85",
+  primaryDark: "#0079AB",
+  accentSoft: "#DEF3FF",
+  bg: "#F5F7FB",
+  text: "#101828",
+  textSubtle: "#667085",
+  border: "#E4E7EC",
+  white: "#FFFFFF",
+  grayScale02: "#E4E4E7",
+  textDark: "#0D1835",
+  success: "#22C55E",
+  warning: "#F59E0B",
+  mutedBlue: "#1E88E5",
+  softGray: "#F2F4F7",
+  chipBg: "#EEF2F6",
+  chipText: "#3E4C59",
+    progressRing: "#C7B7FF",
+  primaryLight: "#DEF3FF",
+  muted: "#6B7280"
+};
