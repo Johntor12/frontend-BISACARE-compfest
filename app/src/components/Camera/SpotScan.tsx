@@ -3,6 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import React, { useRef, useState } from "react";
 import {
   Button,
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -84,7 +85,14 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Kamera */}
-      <CameraView style={styles.camera} onCameraReady={handleCameraReady}>
+      <CameraView
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+        style={styles.camera}
+        onCameraReady={handleCameraReady}
+        ref={cameraRef}
+      >
         {isCameraReady && <SpotScanFrame />}
       </CameraView>
 
@@ -97,6 +105,12 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
           <Text style={styles.buttonText}>UPLOAD</Text>
         </TouchableOpacity>
       </View>
+      {capturedImage && (
+        <View style={styles.imageContainer}>
+          <Text style={styles.imageText}>Captured Image:</Text>
+          <Image source={{ uri: capturedImage }} style={styles.image} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -173,6 +187,21 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 16,
+  },
+
+  imageContainer: {
+    padding: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  imageText: {
+    color: "white",
+    marginBottom: 10,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
   },
 });
 

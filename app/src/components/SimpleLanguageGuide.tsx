@@ -9,7 +9,7 @@ interface SimpleLanguageGuideProps {
 const SimpleLanguageGuide = ({
   term,
   explanation,
-}: SimpleLanguageGuideProps) => {
+}: SimpleLanguageGuideProps) => { 
   return (
     <View style={styles.container}>
       <Text style={styles.term}>{term}</Text>
