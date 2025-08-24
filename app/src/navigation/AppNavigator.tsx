@@ -1,6 +1,7 @@
 import { useAuth } from "@/app/context/AuthContext";
 import LoginScreen from "@/app/login";
-import HomeScreen from "@/app/screen/home-screen";
+import HomeScreen from "@/app/screen/home-screen"; // pastikan path benar
+import RegisterScreen from "@/app/register"; 
 import SplashScreen from "@/app/splash";
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
@@ -11,18 +12,12 @@ const AppNavigator = () => {
   const { user } = useAuth();
 
   return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{ headerShown: false }}
-        />
-        {!user ? (
-            <Stack.Screen name="Login" component={LoginScreen} />
-        ) : (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        )}
-      </Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Splash" component={SplashScreen} />
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen name="Home" component={HomeScreen} />
+  </Stack.Navigator>
   );
 };
 
