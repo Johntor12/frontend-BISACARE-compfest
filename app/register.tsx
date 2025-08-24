@@ -10,7 +10,11 @@ const RegisterScreen = ({ navigation }: any) => {
   const [phone, setPhone] = useState("");
 
   const handleRegister = async () => {
-    const success = await register(email, password, name);
+    // Log input data
+    console.log("Register input:", { email, password, name, phone });
+    const success = await register(email, password, name, phone);
+    // Log hasil register
+    console.log("Register result:", success);
     if (success) {
       navigation.replace("Home");
     } else {
