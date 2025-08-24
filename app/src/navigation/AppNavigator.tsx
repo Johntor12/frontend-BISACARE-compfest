@@ -1,16 +1,29 @@
-// // AppNavigator.tsx
-// import ClaimDetailScreen from "@/app/(tabs)/claim-detail";
-// import { NavigationContainer } from "@react-navigation/native";
-// import { createStackNavigator } from "@react-navigation/stack";
+import { useAuth } from "@/app/context/AuthContext";
+import LoginScreen from "@/app/login";
+import HomeScreen from "@/app/screen/home-screen";
+import SplashScreen from "@/app/splash";
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
 
-// const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
-// export default function AppNavigator() {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator>
-//         <Stack.Screen name="ClaimDetail" component={ClaimDetailScreen} />
-//       </Stack.Navigator>
-//     </NavigationContainer>
-//   );
-// }
+const AppNavigator = () => {
+  const { user } = useAuth();
+
+  return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
+        {!user ? (
+            <Stack.Screen name="Login" component={LoginScreen} />
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} />
+        )}
+      </Stack.Navigator>
+  );
+};
+
+export default AppNavigator;
