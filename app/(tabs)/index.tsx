@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F7FB",
     padding: 16,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
   },
   greeting: {
     fontSize: 22,

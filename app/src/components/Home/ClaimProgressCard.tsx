@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+    marginTop: 16,
   },
   ctaText: { color: "#fff", fontWeight: "800", letterSpacing: 0.3 },
   ctaArrow: { color: "#fff", fontSize: 16, marginTop: -2 },

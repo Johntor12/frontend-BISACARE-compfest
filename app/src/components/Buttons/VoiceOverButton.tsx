@@ -1,11 +1,40 @@
-import Voice from "@react-native-voice/voice";
-import React, { useEffect, useState } from "react";
+import Voice, {
+  SpeechErrorEvent,
+  SpeechResultsEvent,
+} from "@react-native-voice/voice";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import Colors from "../../constants/Colors";
 
 export default function VoiceOverButton() {
   const [isRecording, setIsRecording] = useState(false);
   const [textInputValue, setTextInputValue] = useState("Input...");
+
+  // const [recognizing, setRecognizing] = useState(false);
+  // const [transcript, setTranscript] = useState("");
+
+  // useSpeechRecognitionEvent("start", () => setRecognizing(true));
+  // useSpeechRecognitionEvent("end", () => setRecognizing(false));
+  // useSpeechRecognitionEvent("result", (event) => {
+  //   setTranscript(event.results[0]?.transcript);
+  // });
+  // useSpeechRecognitionEvent("error", (event) => {
+  //   console.log("error code:", event.error, "error message:", event.message);
+  // });
+
+  // const handleStart = async () => {
+  //   const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+  //   if (!result.granted) {
+  //     console.warn("Permissions not granted", result);
+  //     return;
+  //   }
+  //   // Start speech recognition
+  //   ExpoSpeechRecognitionModule.start({
+  //     lang: "en-US",
+  //     interimResults: true,
+  //     continuous: false,
+  //   });
+  // };
 
   // Start recording function
   const startRecording = async () => {
@@ -28,18 +57,24 @@ export default function VoiceOverButton() {
   };
 
   // Function to handle the result from voice recognition
-  const onSpeechResults = (e: any) => {
-    const result = e.value[0]; // Ambil teks pertama dari hasil suara
-    setTextInputValue(result); // Set input form dengan teks yang dikenali
+  const onSpeechResults = (e: SpeechResultsEvent) => {
+    if (e.value && e.value.length > 0) {
+      setTextInputValue(e.value[0]); // gunakan hasil pertama
+    }
+  };
+
+  const onSpeechError = (e: SpeechErrorEvent) => {
+    console.log("Speech recognition error:", e.error);
   };
 
   useEffect(() => {
     // Add event listener for voice recognition results
     Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechError = onSpeechError;
 
     return () => {
       // Clean up listeners
-      Voice.removeAllListeners();
+      Voice.destroy().then(Voice.removeAllListeners);
     };
   }, []);
 
