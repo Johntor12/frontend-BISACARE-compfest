@@ -1,4 +1,5 @@
 import { useRouter } from "expo-router";
+<<<<<<< HEAD
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Roboto_700Bold } from "@expo-google-fonts/roboto";
@@ -33,10 +34,30 @@ export default function ClaimCard() {
       </View>
     );
   }
+=======
+import { Pressable, StyleSheet, Text, View } from "react-native";
+
+import Colors from "../../constants/Colors";
+
+export default function ClaimCard() {
+  const router = useRouter();
+  return (
+    <View style={styles.card}>
+      <Text style={styles.title}>Klaim Asuransi Kesehatan Terakhir</Text>
+      <Pressable
+        style={styles.button}
+        onPress={() => router.push("/screen/claim-detail")}
+      >
+        <Text style={styles.buttonText}>KLAIM SEKARANG →</Text>
+      </Pressable>
+    </View>
+  );
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
 }
 
 const styles = StyleSheet.create({
   card: {
+<<<<<<< HEAD
     backgroundColor: Colors.primary500,
     borderRadius: 12,
     padding: 16,
@@ -57,6 +78,18 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-end",
     alignSelf: "flex-end",
+=======
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  title: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 8,
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
   },
   button: {
     backgroundColor: "#fff",

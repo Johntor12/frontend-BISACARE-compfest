@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import React from "react";
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg"; // expo install react-native-svg
 
@@ -46,7 +50,11 @@ const ClaimTracker = () => {
       {/* Steps Row */}
       <View style={styles.stepsRow}>
         {steps.map((step, index) => (
+<<<<<<< HEAD
           <View key={step.id}>
+=======
+          <React.Fragment key={step.id}>
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
             {/* Circle with checkmark */}
             <View
               style={[
@@ -67,7 +75,11 @@ const ClaimTracker = () => {
 
             {/* Connector line (skip after last step) */}
             {index < steps.length - 1 && <View style={styles.connector} />}
+<<<<<<< HEAD
           </View>
+=======
+          </React.Fragment>
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
         ))}
       </View>
 

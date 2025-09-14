@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { ScrollView, StyleSheet } from "react-native";
 import ClaimCard from "../src/components/Home/ClaimCard";
 import ComplaintCard from "../src/components/Home/ComplaintCard";
@@ -36,3 +37,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
+=======
+import React from "react";
+import { AuthProvider } from "../context/AuthContext";
+import AppNavigator from "../src/navigation/AppNavigator";
+
+export default function App() {
+  return (
+    <AuthProvider>
+        <AppNavigator />
+    </AuthProvider>
+  );
+}
+>>>>>>> 5a203208901fefdc10114716683351b844db2323

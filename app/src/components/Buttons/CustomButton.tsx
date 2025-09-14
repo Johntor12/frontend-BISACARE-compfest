@@ -13,7 +13,17 @@ const CustomButton = ({ label, onPress, customWidth }: CustomButtonProps) => {
   }, [customWidth]);
   return useMemo(() => {
     return (
+<<<<<<< HEAD
       <TouchableOpacity style={[styles.buttonContainer]} onPress={onPress}>
+=======
+      <TouchableOpacity
+        style={[
+          styles.buttonContainer,
+          { width: buttonWidth },
+        ]}
+        onPress={onPress}
+      >
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
         <View style={styles.button}>
           <Text style={styles.buttonLabel}>{label}</Text>
         </View>

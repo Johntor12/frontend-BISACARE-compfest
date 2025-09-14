@@ -47,7 +47,11 @@ const styles = StyleSheet.create({
   },
   title: { fontWeight: "700", color: Colors.text, maxWidth: "70%" },
   detailPill: {
+<<<<<<< HEAD
     backgroundColor: Colors.primary500,
+=======
+    backgroundColor: Colors.primary,
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,

@@ -22,7 +22,11 @@ export default function ClaimTracker({ steps }: { steps: Step[] }) {
                 style={[
                   styles.line,
                   s.status !== "pending" && {
+<<<<<<< HEAD
                     backgroundColor: Colors.primary500,
+=======
+                    backgroundColor: Colors.primary,
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
                   },
                 ]}
               />
@@ -54,11 +58,19 @@ const styles = StyleSheet.create({
   },
   dotDone: {
     backgroundColor: Colors.primaryLight,
+<<<<<<< HEAD
     borderColor: Colors.primary500,
   },
   dotActive: {
     backgroundColor: Colors.primary500,
     borderColor: Colors.primary500,
+=======
+    borderColor: Colors.primary,
+  },
+  dotActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
   },
   line: {
     height: 2,
