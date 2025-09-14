@@ -22,7 +22,7 @@ export default function ClaimTracker({ steps }: { steps: Step[] }) {
                 style={[
                   styles.line,
                   s.status !== "pending" && {
-                    backgroundColor: Colors.primary,
+                    backgroundColor: Colors.primary500,
                   },
                 ]}
               />
@@ -54,11 +54,11 @@ const styles = StyleSheet.create({
   },
   dotDone: {
     backgroundColor: Colors.primaryLight,
-    borderColor: Colors.primary,
+    borderColor: Colors.primary500,
   },
   dotActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
+    backgroundColor: Colors.primary500,
+    borderColor: Colors.primary500,
   },
   line: {
     height: 2,

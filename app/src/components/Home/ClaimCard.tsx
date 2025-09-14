@@ -37,7 +37,7 @@ export default function ClaimCard() {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primary500,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

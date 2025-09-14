@@ -2,6 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import Colors from "../constants/Colors";
 
 interface PercentageCardProps {
   title: string;
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     top: 9,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    backgroundColor: "#005D85",
+    backgroundColor: Colors.primaryBlue700,
     borderRadius: 8,
   },
   detailText: {
