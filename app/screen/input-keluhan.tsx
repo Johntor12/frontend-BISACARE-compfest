@@ -1,10 +1,6 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-<<<<<<< HEAD
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-=======
-import { ScrollView, StyleSheet, Text } from "react-native";
->>>>>>> 5a203208901fefdc10114716683351b844db2323
 import CustomButton from "../src/components/Buttons/CustomButton";
 import VoiceOverButton from "../src/components/Buttons/VoiceOverButton";
 import KemungkinanClaim from "../src/components/Home/KemungkinanClaim";
@@ -14,18 +10,13 @@ export default function InputKeluhanScreen() {
 
   const router = useRouter();
   const handleClaim = () => {
-<<<<<<< HEAD
     router.push("/screen/spot-scan");
-=======
-    router.push("/screen/pilih-rumah-sakit");
->>>>>>> 5a203208901fefdc10114716683351b844db2323
   };
 
   const handleNotClaim = () => {
     console.log("Tidak Klaim");
   };
   return (
-<<<<<<< HEAD
     <>
       <ScrollView
         style={styles.container}
@@ -48,28 +39,6 @@ export default function InputKeluhanScreen() {
         <CustomButton label="Klaim Sekarang" onPress={handleClaim} />
       </View>
     </>
-=======
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{
-        paddingBottom: 40,
-      }}
-    >
-      <Text style={styles.headerText}>Apa yang Kamu Rasakan Sekarang?</Text>
-      <Text style={styles.subHeaderText}>
-        Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
-        ditanggung oleh asuransi.
-      </Text>
-
-      <VoiceOverButton />
-
-      <KemungkinanClaim />
-      <ScrollView style={styles.button}>
-        <CustomButton label="Klaim Sekarang" onPress={handleClaim} />
-        <CustomButton label="Tidak Klaim" onPress={handleNotClaim} />
-      </ScrollView>
-    </ScrollView>
->>>>>>> 5a203208901fefdc10114716683351b844db2323
   );
 }
 
@@ -91,7 +60,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "medium",
   },
-<<<<<<< HEAD
   buttonContainer: {
     width: "100%",
     borderTopLeftRadius: 12,
@@ -107,10 +75,3 @@ const styles = StyleSheet.create({
     gap: 20,
   },
 });
-=======
-  button: {
-    flexDirection: "row",
-    gap: 8,
-  },
-});
->>>>>>> 5a203208901fefdc10114716683351b844db2323

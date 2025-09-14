@@ -33,9 +33,5 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   icon: { fontSize: 16 },
-<<<<<<< HEAD
   label: { color: Colors.primary500, fontWeight: "800" },
-=======
-  label: { color: Colors.primary, fontWeight: "800" },
->>>>>>> 5a203208901fefdc10114716683351b844db2323
 });

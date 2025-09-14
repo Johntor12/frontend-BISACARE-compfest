@@ -1,14 +1,8 @@
 export default {
-<<<<<<< HEAD
   primary500: "#0391CE",
   primaryBlue700: "#005D85",
   primaryDark: "#0079AB",
   tertiary100: "#DBC7FF",
-=======
-  primary: "#0391CE",
-  primaryBlue700:"#005D85",
-  primaryDark: "#0079AB",
->>>>>>> 5a203208901fefdc10114716683351b844db2323
   accentSoft: "#DEF3FF",
   bg: "#F5F7FB",
   text: "#101828",
