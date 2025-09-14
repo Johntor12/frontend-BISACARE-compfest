@@ -1,5 +1,9 @@
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+<<<<<<< HEAD
+=======
+import { useRouter } from "expo-router";
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
 import React, { useRef, useState } from "react";
 import {
   Button,
@@ -33,6 +37,10 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -82,6 +90,13 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handleLanjut = () => {
+    router.push("/screen/tunjukkan-slip")
+  }
+
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
   return (
     <SafeAreaView style={styles.container}>
       {/* Kamera */}
@@ -109,6 +124,12 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
         <View style={styles.imageContainer}>
           <Text style={styles.imageText}>Captured Image:</Text>
           <Image source={{ uri: capturedImage }} style={styles.image} />
+<<<<<<< HEAD
+=======
+          <TouchableOpacity style={styles.button} onPress={handleLanjut}>
+          <Text style={styles.buttonText}>Lanjut</Text>
+        </TouchableOpacity>
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
         </View>
       )}
     </SafeAreaView>

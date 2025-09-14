@@ -36,6 +36,7 @@
         }
       ],
       [
+<<<<<<< HEAD
         "expo-speech-recognition",
         {
           "microphonePermission": "Allow $(PRODUCT_NAME) to use the microphone.",
@@ -46,6 +47,8 @@
         }
       ],
       [
+=======
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
@@ -58,7 +61,11 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
+<<<<<<< HEAD
       "expo-build-properties"
+=======
+      "expo-font"
+>>>>>>> 5a203208901fefdc10114716683351b844db2323
     ],
     "experiments": {
       "typedRoutes": true
