@@ -43,11 +43,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   btn: {
-<<<<<<< HEAD
     backgroundColor: Colors.primaryBlue700,
-=======
-    backgroundColor: Colors.primary,
->>>>>>> 5a203208901fefdc10114716683351b844db2323
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: "center",
