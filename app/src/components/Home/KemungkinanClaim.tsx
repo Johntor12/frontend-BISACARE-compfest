@@ -34,10 +34,10 @@ function KemungkinanHeader({
 function KemungkinanDiagnosis({
   kemungkinanDiagnosis = "Infeksi saluran pernapasan atas / Faringitis",
   polisMenanggung = [
-    { label: "Konsultasi Dokter Umum", color: "green" },
-    { label: "Obat demam & batuk", color: "green" },
-    { label: "Tes Lab Dasar", color: "yellow" },
-    { label: "Rawat Inap", color: "red" },
+    { label: "🟢 Konsultasi Dokter Umum", color: "black" },
+    { label: "🟢 Obat demam & batuk", color: "black" },
+    { label: "🟡 Tes Lab Dasar", color: "black" },
+    { label: "🔴 Rawat Inap", color: "black" },
   ],
 }: KemungkinanDiagnosisProps) {
   return (
@@ -48,7 +48,7 @@ function KemungkinanDiagnosis({
       <Text style={styles.kemungkinanDiagnosisText}>
         {kemungkinanDiagnosis}
       </Text>
-      <Text>Polis Kamu Menanggung:</Text>
+      <Text>📄 Polis Kamu Menanggung:</Text>
       {polisMenanggung.map((item, index) => (
         <Text key={index} style={[styles.polisItem, { color: item.color }]}>
           {item.label}
@@ -70,6 +70,7 @@ export default function KemungkinanClaim() {
 const styles = StyleSheet.create({
   kemungkinanClaimSection: {
     flexDirection: "column",
+    borderRadius: 12,
     gap: 12,
   },
 
@@ -81,6 +82,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     aspectRatio: 356 / 84,
     padding: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#3737FA",
+    marginTop: 12,
   },
   kemungkinanHeaderText: {
     fontWeight: "bold",
@@ -96,6 +101,9 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: Colors.white,
     borderRadius: 8,
+    borderColor: "#3737FA",
+    borderWidth: 2,
+    marginBottom: 100,
   },
   kemungkinanDiagnosisText: {
     flexDirection: "column",

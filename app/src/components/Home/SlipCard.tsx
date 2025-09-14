@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   btn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryBlue700,
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: "center",

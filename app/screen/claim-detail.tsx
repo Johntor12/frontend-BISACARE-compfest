@@ -34,7 +34,7 @@ export default function ClaimDetailScreen() {
       >
         {/* Progress Klaim */}
         <View style={{ marginBottom: 40 }}>
-          <ClaimProgressCard progress={50} />
+          <ClaimProgressCard progress={60} />
         </View>
 
         {/* Claim Tracker */}
@@ -109,7 +109,7 @@ export default function ClaimDetailScreen() {
 
 const styles = StyleSheet.create({
   hero: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primary500,
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 56,
@@ -158,10 +158,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: Colors.primary,
+    borderColor: Colors.primary500,
     backgroundColor: "#fff",
     gap: 8,
   },
-  ctaText: { color: Colors.primary, fontWeight: "700" },
-  ctaArrow: { color: Colors.primary, fontSize: 16, marginTop: -2 },
+  ctaText: { color: Colors.primary500, fontWeight: "700" },
+  ctaArrow: { color: Colors.primary500, fontSize: 16, marginTop: -2 },
 });

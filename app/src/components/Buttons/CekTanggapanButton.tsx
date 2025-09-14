@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primary500,
     width: 177,
     aspectRatio: 177 / 36,
     borderRadius: 12,

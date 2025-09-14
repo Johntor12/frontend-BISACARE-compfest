@@ -1,7 +1,8 @@
 export default {
-  primary: "#0391CE",
+  primary500: "#0391CE",
   primaryBlue700: "#005D85",
   primaryDark: "#0079AB",
+  tertiary100: "#DBC7FF",
   accentSoft: "#DEF3FF",
   bg: "#F5F7FB",
   text: "#101828",
