@@ -1,16 +1,42 @@
 import { useRouter } from "expo-router";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { Roboto_700Bold } from "@expo-google-fonts/roboto";
 import { useFonts } from "@expo-google-fonts/roboto/useFonts";
+import { useState } from "react";
 import Colors from "../../constants/Colors";
+import Modal from "../Modal";
 
 const { width, height } = Dimensions.get("window");
 
 const cardWidth = (width * 362) / 412;
 const cardHeight = (height * 209) / 1074;
 
-export default function ClaimCard() {
+interface ClaimCardProps {
+  title?: string;
+  buttonText?: string;
+  onClick?: () => void;
+  modalActivation?: "on" | "off";
+  onFalseAction?: () => void;
+  onTrueAction?: () => void;
+}
+
+export default function ClaimCard({
+  title = "Klaim Asuransi Kesehatan Terakhir",
+  buttonText = "KLAIM SEKARANG →",
+  onClick,
+  modalActivation = "on",
+  onFalseAction = () => {},
+  onTrueAction = () => {},
+}: ClaimCardProps) {
+  const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
 
   let [fontsLoaded] = useFonts({
@@ -21,14 +47,39 @@ export default function ClaimCard() {
   } else {
     return (
       <View style={styles.card}>
-        <Text style={styles.title}>Klaim Asuransi Kesehatan Terakhir</Text>
+        <Image
+          source={require("../../../../assets/images/patternHeader.png")}
+          style={styles.headerPatternLeft}
+          resizeMode="contain"
+        />
+        <Image
+          source={require("../../../../assets/images/patternHeader.png")}
+          style={styles.headerPatternRight}
+          resizeMode="contain"
+        />
+        <Text style={styles.title}>{title}</Text>
         <View style={styles.buttonContainer}>
           <Pressable
             style={styles.button}
-            onPress={() => router.push("/screen/claim-detail")}
+            onPress={() => {
+              setIsVisible(true);
+            }}
           >
-            <Text style={styles.buttonText}>KLAIM SEKARANG →</Text>
+            <Text style={styles.buttonText}>{buttonText}</Text>
           </Pressable>
+
+          {modalActivation ? (
+            <Modal
+              visible={isVisible}
+              title="Sudah mendapat diagnosis?"
+              subtitle="Cerita Gejalamu, Kami bantu Cek Klaimnya"
+              onClose={() => setIsVisible(false)}
+              onFalse={onFalseAction}
+              onTrue={onTrueAction}
+            />
+          ) : (
+            <></>
+          )}
         </View>
       </View>
     );
@@ -43,7 +94,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     flexDirection: "column",
     width: cardWidth,
-    height: cardHeight,
+    aspectRatio: 362 / 209,
   },
   title: {
     width: 200,
@@ -59,14 +110,29 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.primaryBlue700,
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     alignSelf: "flex-start",
   },
   buttonText: {
-    color: "#007AFF",
+    color: "#fff",
     fontWeight: "600",
+  },
+
+  headerPatternRight: {
+    position: "absolute",
+    top: -12,
+    right: -48,
+    width: width * 0.5,
+    height: 110,
+  },
+  headerPatternLeft: {
+    position: "absolute",
+    bottom: -12,
+    left: -48,
+    width: width * 0.5,
+    height: 115,
   },
 });

@@ -1,7 +1,14 @@
 // src/components/ClaimDetail/ClaimProgressCard.tsx
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import Colors from "../../constants/Colors";
 
@@ -14,6 +21,11 @@ type ClaimProgressCardProps = {
   onPress?: () => void;
   showIcon?: boolean;
 };
+
+const { width, height } = Dimensions.get("window");
+
+const cardWidth = (width * 362) / 412;
+const cardHeight = (height * 209) / 1074;
 
 export default function ClaimProgressCard({
   progress = 50,
@@ -42,6 +54,11 @@ export default function ClaimProgressCard({
 
   return (
     <View style={styles.card}>
+      <Image
+        source={require("../../../../assets/images/patternHeader.png")}
+        style={styles.headerPatternRight}
+        resizeMode="contain"
+      />
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{title}</Text>
         <Pressable
@@ -121,12 +138,20 @@ export default function ClaimProgressCard({
 
 const styles = StyleSheet.create({
   card: {
+    position: "relative",
+    overflow: "hidden",
     backgroundColor: Colors.primary500,
     borderRadius: 16,
     padding: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
+  },
+  headerPatternRight: {
+    position: "absolute",
+    right: -32,
+    width: width * 0.5,
+    zIndex: 0,
   },
   title: {
     color: "#fff",
@@ -145,7 +170,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 16,
   },
-  ctaText: { color: "#fff", fontWeight: "800", letterSpacing: 0.3 },
+  ctaText: { color: "#fff", fontWeight: "700", letterSpacing: 0.3 },
   ctaArrow: { color: "#fff", fontSize: 16, marginTop: -2 },
   percent: {
     position: "absolute",

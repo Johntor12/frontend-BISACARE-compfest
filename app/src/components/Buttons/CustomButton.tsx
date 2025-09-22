@@ -1,40 +1,69 @@
-import { useMemo } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ReactNode, useMemo } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
+import Colors from "../../constants/Colors";
 
 interface CustomButtonProps {
   label: string;
   onPress?: () => void;
+  variant?: "primary" | "secondary";
   customWidth?: number;
+  customHeight?: number;
+  customStyle?: ViewStyle;
+  labelStyle?: TextStyle;
+  icon?: ReactNode; // bisa kasih icon atau element di samping label
 }
 
-const CustomButton = ({ label, onPress, customWidth }: CustomButtonProps) => {
-  const buttonWidth = useMemo(() => {
-    return customWidth || 179; // Default width if customWidth is not provided
-  }, [customWidth]);
-  return useMemo(() => {
-    return (
-      <TouchableOpacity
-        style={[styles.buttonContainer, { width: buttonWidth }]}
-        onPress={onPress}
-      >
-        <View style={styles.button}>
-          <Text style={styles.buttonLabel}>{label}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }, [label, onPress]);
+const CustomButton = ({
+  label,
+  onPress,
+  variant = "primary",
+  customWidth,
+  customHeight,
+  customStyle,
+  labelStyle,
+  icon,
+}: CustomButtonProps) => {
+  const buttonStyle = useMemo(
+    () => [
+      styles.buttonContainer,
+      {
+        width: customWidth || 179,
+        height: customHeight || undefined,
+        backgroundColor:
+          variant === "primary" ? Colors.primaryBlue700 : "white",
+      },
+      customStyle,
+    ],
+    [customWidth, customHeight, customStyle]
+  );
+
+  const labelColor =
+    variant === "primary" ? Colors.white : Colors.primaryBlue700;
+
+  return (
+    <TouchableOpacity style={buttonStyle} onPress={onPress} activeOpacity={0.7}>
+      <View style={styles.button}>
+        {icon && <View style={styles.iconContainer}>{icon}</View>}
+        <Text style={[styles.buttonLabel, { color: labelColor }, labelStyle]}>
+          {label}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    aspectRatio: 129 / 48,
     borderRadius: 8,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
   },
   button: {
-    backgroundColor: "#005D85",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
@@ -52,8 +81,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 20,
     height: 20,
-    position: "relative",
-    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
