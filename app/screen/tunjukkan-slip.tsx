@@ -2,24 +2,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import UploadFile from "../src/components/Home/UploadFile";
+import ScreenContainer from "../src/components/ScreenContainer";
 
 export default function HospitalRegisterScreen() {
-    const router = useRouter();
+  const router = useRouter();
 
-    const [slipImage, setSlipImage] = useState<string | null>(null);
-    const [invoiceImage, setInvoiceImage] = useState<string | null>(null);
+  const [slipImage, setSlipImage] = useState<string | null>(null);
+  const [invoiceImage, setInvoiceImage] = useState<string | null>(null);
 
-    const pickImage = async (type: "slip" | "invoice") => {
+  const pickImage = async (type: "slip" | "invoice") => {
     // Minta izin akses galeri
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
@@ -28,10 +22,11 @@ export default function HospitalRegisterScreen() {
     }
 
     // Buka galeri
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images", // ← pakai string literal, bukan MediaTypeOptions
       allowsEditing: true,
-      quality: 0.8,
+      aspect: [4, 3],
+      quality: 0.7,
     });
 
     if (!result.canceled) {
@@ -45,71 +40,52 @@ export default function HospitalRegisterScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => {
-            router.back()
-        }}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
+    <ScreenContainer>
       {/* Body */}
-      <ScrollView contentContainerStyle={styles.body}>
-        <View style={styles.title}>
-          <Text style={{ fontWeight: "bold" }}>Lihat dan Tunjukan Slip
-            untuk Mendaftarkan Dirimu!</Text>
+      <View style={styles.title}>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.titleBold}>Lihat dan Tunjukan Slip </Text>
+          <Text style={styles.titleNormal}>untuk</Text>
         </View>
-        <Text style={styles.subtitle}>
-          Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
-          ditanggung oleh asuransi.
-        </Text>
+        <Text style={styles.titleNormal}>Mendaftarkan Dirimu!</Text>
+      </View>
+      <Text style={styles.subtitle}>
+        Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
+        ditanggung oleh asuransi.
+      </Text>
 
-        {/* Download Slip */}
-        {/* Upload Slip */}
-      <Text style={styles.sectionTitle}>Download Slip</Text>
-      <TouchableOpacity
-        style={styles.uploadBox}
-        onPress={() => pickImage("slip")}
-      >
-        {slipImage ? (
-          <Image source={{ uri: slipImage }} style={styles.uploadedImage} />
-        ) : (
-          <Text style={styles.placeholderText}>
-            Download dokumen dan tunjukkan ke kasir dari loket yang kamu dapat
-          </Text>
-        )}
-      </TouchableOpacity>
+      {/* Download Slip */}
+      {/* Upload Slip */}
+      <UploadFile
+        namaFile="Slip Pendaftaran"
+        icon="download"
+        onChange={(uri) => setSlipImage(uri)}
+      />
 
-        {/* Upload Invoice */}
+      {/* Upload Invoice */}
       <Text style={styles.sectionTitle}>
-        Sudah mendapat Dokumen/<Text style={{ fontStyle: "italic" }}>Invoice</Text> RS?
+        Sudah mendapat Dokumen/
+        <Text style={{ fontStyle: "italic" }}>Invoice</Text> RS?
       </Text>
       <Text style={styles.desc}>Upload dokumen untuk disimpan</Text>
 
-      <TouchableOpacity
-        style={styles.uploadBox}
-        onPress={() => pickImage("invoice")}
-      >
-        {invoiceImage ? (
-          <Image source={{ uri: invoiceImage }} style={styles.uploadedImage} />
-        ) : (
-          <Text style={styles.placeholderText}>
-            Scan/Upload KTP terbarumu{"\n"}Max file size : 10 MB
-          </Text>
-        )}
-      </TouchableOpacity>
+      <UploadFile
+        namaFile="Invoice RS"
+        icon={"upload"}
+        onChange={(uri) => setInvoiceImage(uri)}
+      />
 
-        {/* Button */}
-        <TouchableOpacity style={styles.button} onPress={() => {
-            router.push("/screen/coverage")
-        }}>
-          <Text style={styles.buttonText}>Lanjutkan Proses</Text>
-          <Ionicons name="arrow-forward" size={18} color="#fff" />
-        </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+      {/* Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          router.push("/screen/coverage");
+        }}
+      >
+        <Text style={styles.buttonText}>Lanjutkan Proses</Text>
+        <Ionicons name="arrow-forward" size={18} color="#fff" />
+      </TouchableOpacity>
+    </ScreenContainer>
   );
 }
 
@@ -132,12 +108,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   desc: {
-        fontSize: 14,
-        color: "#555",
-        marginBottom: 12,
-  },
-  body: {
-    padding: 20,
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#555",
+    marginBottom: 12,
   },
   title: {
     fontSize: 18,
@@ -145,15 +119,26 @@ const styles = StyleSheet.create({
     color: "#111",
     marginBottom: 6,
   },
+  titleBold: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#111",
+  },
+  titleNormal: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#111",
+    marginTop: 2,
+  },
   subtitle: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#555",
     marginBottom: 16,
   },
 
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "500",
     color: "#111",
     marginTop: 20,
     marginBottom: 4,
@@ -184,6 +169,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
     marginTop: 20,
+    marginBottom: 48,
   },
   buttonText: {
     color: "#fff",
@@ -192,7 +178,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   uploadBox: {
-     borderWidth: 1,
+    borderWidth: 1,
     borderStyle: "dashed",
     borderColor: "#999",
     borderRadius: 10,

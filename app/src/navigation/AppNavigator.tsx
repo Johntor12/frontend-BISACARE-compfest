@@ -1,11 +1,12 @@
+import LoginScreen from "@/app/(auth)/login";
+import RegisterScreen from "@/app/(auth)/register";
+import SplashScreen from "@/app/(auth)/splash";
 import { useAuth } from "@/app/context/AuthContext";
-import LoginScreen from "@/app/login";
-import RegisterScreen from "@/app/register";
 import HomeScreen from "@/app/screen/home-screen"; // pastikan path benar
-import SplashScreen from "@/app/splash";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AppHeader from "../components/AppHeader";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   const { user } = useAuth();
@@ -15,7 +16,11 @@ const AppNavigator = () => {
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ header: (props) => <AppHeader {...props} /> }}
+      />
     </Stack.Navigator>
   );
 };

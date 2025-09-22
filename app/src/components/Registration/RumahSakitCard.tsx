@@ -3,13 +3,20 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   name: string;
+  variant?: "RS" | "asuransi";
   hours: string;
   phone: string;
   image: any;
 };
 
-const RumahSakitCard = ({ name, hours, phone, image }: Props) => {
-    const router = useRouter();
+const RumahSakitCard = ({
+  name,
+  variant = "RS",
+  hours,
+  phone,
+  image,
+}: Props) => {
+  const router = useRouter();
 
   return (
     <View style={styles.cardContainer}>
@@ -40,11 +47,22 @@ const RumahSakitCard = ({ name, hours, phone, image }: Props) => {
           <Text>{phone}</Text>
         </View>
 
-        <View style={{ width: "100%", justifyContent: "flex-end" }}>
-          <Pressable style={styles.pilihRSButton} onPress={() => {
-            router.push("/screen/claim-form")
-          }}>
-            <Text style={styles.textPilihRS}>Pilih RS →</Text>
+        <View
+          style={{ width: "100%", justifyContent: "flex-end", marginTop: 8 }}
+        >
+          <Pressable
+            style={styles.pilihRSButton}
+            onPress={() => {
+              {
+                variant === "RS"
+                  ? router.push("/screen/claim-form")
+                  : router.push("/screen/isi-data-diri-asuransi");
+              }
+            }}
+          >
+            <Text style={styles.textPilihRS}>
+              Pilih {variant === "RS" && `${variant}`} →
+            </Text>
           </Pressable>
         </View>
       </View>

@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
+import DataPasien from "../screen/profile-pasien";
+import ScreenContainer from "../src/components/ScreenContainer";
 
 export default function ProfilScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profil Pengguna</Text>
-      <Text>Detail profil user ditaruh di sini.</Text>
-    </View>
+    <ScreenContainer scrollable={true}>
+      <DataPasien />
+    </ScreenContainer>
   );
 }
 

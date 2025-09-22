@@ -31,11 +31,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-<<<<<<< HEAD
 rootProject.name = 'FrontendBISACAREcompfest'
-=======
-rootProject.name = 'Frontend_BISACARE_compfest'
->>>>>>> 5a203208901fefdc10114716683351b844db2323
 
 expoAutolinking.useExpoVersionCatalog()
 

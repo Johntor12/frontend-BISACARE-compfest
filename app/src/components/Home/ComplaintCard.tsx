@@ -1,5 +1,6 @@
 import { Roboto_500Medium, Roboto_700Bold } from "@expo-google-fonts/roboto";
 import { useFonts } from "@expo-google-fonts/roboto/useFonts";
+import { useRouter } from "expo-router";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Colors from "../../constants/Colors";
 
@@ -9,6 +10,7 @@ const cardWidth = (width * 362) / 412;
 const cardHeight = (height * 209) / 1074;
 
 export default function ComplaintCard() {
+  const router = useRouter();
   let [fontsLoaded] = useFonts({
     Roboto_500Medium,
     Roboto_700Bold,
@@ -23,7 +25,12 @@ export default function ComplaintCard() {
         <Text style={styles.subtitle}>
           Ceritakan gejalamu, kami bantu cek klaimnya
         </Text>
-        <Pressable style={styles.button}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            router.push("/screen/input-keluhan");
+          }}
+        >
           <Text style={styles.buttonText}>Masukkan Keluhanmu →</Text>
         </Pressable>
       </View>

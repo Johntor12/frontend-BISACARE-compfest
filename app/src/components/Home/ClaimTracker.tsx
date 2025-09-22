@@ -1,4 +1,5 @@
 // src/components/ClaimDetail/ClaimTracker.tsx
+import Feather from "@expo/vector-icons/Feather";
 import { StyleSheet, Text, View } from "react-native";
 import Colors from "../../constants/Colors";
 
@@ -16,7 +17,13 @@ export default function ClaimTracker({ steps }: { steps: Step[] }) {
                 s.status === "done" && styles.dotDone,
                 s.status === "active" && styles.dotActive,
               ]}
-            />
+            >
+              <Feather
+                name="check"
+                size={18}
+                color={s.status !== "done" ? "#FFF" : "#0A3977"}
+              />
+            </View>
             {!isLast && (
               <View
                 style={[
@@ -45,16 +52,21 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   dot: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: "#fff",
-    borderWidth: 2,
-    borderColor: Colors.border,
+    borderWidth: 1,
+    borderColor: "#fff",
+    shadowRadius: 4,
+    shadowColor: "#000",
+    elevation: 4,
+    zIndex: 10,
   },
   dotDone: {
-    backgroundColor: Colors.primaryLight,
-    borderColor: Colors.primary500,
+    backgroundColor: "#FFF",
   },
   dotActive: {
     backgroundColor: Colors.primary500,
@@ -64,9 +76,11 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: Colors.border,
     position: "absolute",
-    top: 11,
-    left: "50%",
+    top: 14,
+    left: "66%",
     right: "-50%",
+
+    zIndex: 0,
   },
   label: { marginTop: 8, fontSize: 12, color: Colors.text },
 });

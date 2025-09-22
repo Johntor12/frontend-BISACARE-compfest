@@ -1,10 +1,5 @@
-import { AuthProvider } from "../context/AuthContext";
-import AppNavigator from "../src/navigation/AppNavigator";
+import HomeScreen from "../screen/home-screen";
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <AppNavigator />
-    </AuthProvider>
-  );
+  return <HomeScreen />;
 }
