@@ -14,6 +14,7 @@ export default function VoiceOverButton() {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [waveform, setWaveform] = useState<number[]>([]);
+  const [keluhan, setKeluhan] = useState<String>("");
 
   const startRecording = async () => {
     try {

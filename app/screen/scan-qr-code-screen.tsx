@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import UploadFile from "../src/components/Home/UploadFile";
+import Modal from "../src/components/Modal";
 import ScreenContainer from "../src/components/ScreenContainer";
 
 export default function HospitalRegisterScreen() {
@@ -12,6 +13,7 @@ export default function HospitalRegisterScreen() {
 
   const [slipImage, setSlipImage] = useState<string | null>(null);
   const [invoiceImage, setInvoiceImage] = useState<string | null>(null);
+  const [showModalLoket, setShowModalLoket] = useState(false);
 
   const pickImage = async (type: "slip" | "invoice") => {
     // Minta izin akses galeri
@@ -64,12 +66,25 @@ export default function HospitalRegisterScreen() {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          router.push("/screen/tunjukkan-slip");
+          setShowModalLoket(true);
         }}
       >
         <Text style={styles.buttonText}>Lanjutkan Proses</Text>
         <Ionicons name="arrow-forward" size={18} color="#fff" />
       </TouchableOpacity>
+      <Modal
+        onClose={() => {
+          setShowModalLoket(false);
+        }}
+        title="Silakan ke Loket A"
+        onFalse={() => {
+          setShowModalLoket(false);
+        }}
+        onTrue={() => {
+          router.push("/screen/tunjukkan-slip");
+        }}
+        visible={showModalLoket}
+      />
     </ScreenContainer>
   );
 }

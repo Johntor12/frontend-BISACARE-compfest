@@ -293,6 +293,7 @@ const styles = StyleSheet.create({
     aspectRatio: 362 / 213,
   },
   input: {
+    width: "100%",
     justifyContent: "center",
     borderWidth: 1,
     borderColor: "#ccc",

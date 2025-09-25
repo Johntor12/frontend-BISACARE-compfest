@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 import Colors from "../../constants/Colors";
 import VoiceOverButton from "../Buttons/VoiceOverButton";
@@ -9,6 +10,8 @@ interface VoiceOverSectionProps {
 export default function VoiceOverSection({
   onCekTanggapan,
 }: VoiceOverSectionProps) {
+  const [adaRecording, setAdaRecording] = useState(false);
+
   return (
     <>
       <VoiceOverButton></VoiceOverButton>

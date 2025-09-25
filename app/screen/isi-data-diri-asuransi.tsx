@@ -77,7 +77,8 @@ const DataDiriAsuransiScreen = () => {
   const phoneInput = useRef<PhoneInput>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [formattedValue, setFormattedValue] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showFirstModal, setshowFirstModal] = useState(false);
+  const [showSecondModal, setShowSecondModal] = useState(false);
 
   const router = useRouter();
 
@@ -223,21 +224,39 @@ const DataDiriAsuransiScreen = () => {
           mode="contained"
           style={styles.submitBtn}
           onPress={() => {
-            setShowModal(true);
+            setshowFirstModal(true);
           }}
         >
           <Text>Lanjutkan Proses →</Text>
         </Button>
         <Modal
-          visible={showModal}
-          onClose={() => setShowModal(false)}
+          visible={showFirstModal}
+          onClose={() => setshowFirstModal(false)}
+          title="Klaim sudah berhasil terkirim!"
+          subtitle="Klaim anda diproses rata-rata dalam 3-5 hari kerja"
+          falseText="Tidak"
+          trueText="Lanjut"
           onFalse={() => {
-            router.push("/screen/chatbot");
-            setShowModal(false);
+            setshowFirstModal(false);
           }}
           onTrue={() => {
-            router.push("/screen/panduan-aju-banding");
-            setShowModal(false);
+            setshowFirstModal(false);
+            setShowSecondModal(true);
+          }}
+        />
+        <Modal
+          visible={showSecondModal}
+          onClose={() => setShowSecondModal(false)}
+          title="Mohon maaf, Klaim anda ditolak!"
+          subtitle="Klik lanjut untuk mengajukan banding"
+          falseText="Tidak"
+          trueText="Lanjut"
+          onFalse={() => {
+            setShowSecondModal(false);
+          }}
+          onTrue={() => {
+            router.push("/screen/chatbot");
+            setShowSecondModal(false);
           }}
         />
       </View>
