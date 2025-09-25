@@ -1,12 +1,22 @@
+import { useAuth } from "@/app/context/AuthContext";
+import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as Sharing from "expo-sharing";
+import { useState } from "react";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export interface UploadFileProps {
   namaFile?: string;
   icon?: "upload" | "download";
   uri?: string | null;
-  onChange?: (uri: string) => void; // callback ke parent
+  onChange?: (uri: string) => void;
 }
 
 export default function UploadFile({
@@ -15,45 +25,92 @@ export default function UploadFile({
   uri,
   onChange,
 }: UploadFileProps) {
+  const { fetchWithAuth } = useAuth();
   const router = useRouter();
-  const pathname = usePathname(); // <- ambil path parent aktif
+  const pathname = usePathname();
   const params = useLocalSearchParams<{ imageUri?: string }>();
   const [image, setImage] = useState<string | null>(null);
 
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: "images",
-  //     allowsEditing: true,
-  //     aspect: [4, 3],
-  //     quality: 0.7,
-  //   });
+  const dummyImage = "https://picsum.photos/600/400";
 
-  //   if (!result.canceled) {
-  //     const uri = result.assets[0].uri;
-  //     setImage(uri);
-  //     onChange?.(uri);
+  // const handleDownload = async () => {
+  //   if (icon === "download") {
+  //     // langsung set dummy image
+  //     setImage(dummyImage);
+  //     onChange?.(dummyImage);
+
+  //     // otomatis download ke local
+  //     try {
+  //       const fileUri =
+  //         FileSystem.documentDirectory + `${namaFile.replace(/\s+/g, "_")}.jpg`;
+  //       const result = await FileSystem.downloadAsync(dummyImage, fileUri);
+
+  //       Alert.alert("Download Berhasil", `File tersimpan di: ${result.uri}`);
+  //     } catch (err) {
+  //       console.error("Download gagal:", err);
+  //       Alert.alert("Error", "Gagal mendownload file");
+  //     }
   //   }
   // };
-
-  useEffect(() => {
-    if (params.imageUri) {
-      setImage(params.imageUri);
-      onChange?.(params.imageUri);
-    }
-  }, [params.imageUri]);
 
   const openSpotScan = () => {
     router.push({
       pathname: "/screen/spot-scan",
-      params: { returnTo: pathname }, // <- kirim parent path
+      params: { returnTo: pathname },
     });
+  };
+
+  // =====================
+  // Dummy download handler
+  // =====================
+  const handleDownload = async () => {
+    try {
+      // pakai endpoint dummy
+      const url = `/ajubanding/file-dummy.pdf`;
+      const response = await fetchWithAuth(url);
+
+      if (!response.ok) {
+        throw new Error(`Gagal download: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const fileReader = new FileReader();
+
+      fileReader.onload = async () => {
+        try {
+          const base64Data = (fileReader.result as string).split(",")[1];
+          const fileUri = FileSystem.documentDirectory + `file_dummy.pdf`;
+
+          await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+            encoding: "base64",
+          });
+
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(fileUri);
+          } else {
+            Alert.alert("Sukses", `File berhasil diunduh ke ${fileUri}`);
+          }
+        } catch (err) {
+          console.error("❌ Error write file:", err);
+          Alert.alert("Error", "Gagal menyimpan file");
+        }
+      };
+
+      fileReader.readAsDataURL(blob);
+    } catch (err: any) {
+      console.error("❌ Download error:", err);
+      Alert.alert("Error", "Gagal mengunduh file");
+    }
   };
 
   return (
     <View>
       <Text style={styles.label}>{namaFile}</Text>
-      <TouchableOpacity style={styles.uploadBox} onPress={openSpotScan}>
-        {image ? (
+      <TouchableOpacity
+        style={styles.uploadBox}
+        onPress={icon === "upload" ? openSpotScan : () => {}}
+      >
+        {image && icon === "upload" ? (
           <Image source={{ uri: image }} style={styles.uploadImage} />
         ) : (
           <View style={styles.emptyContent}>
@@ -69,9 +126,7 @@ export default function UploadFile({
                 Scan/Upload {namaFile} {"\n"}Max file size : 10 MB
               </Text>
             ) : (
-              <Text style={styles.uploadText}>
-                Download {namaFile} {"\n"}Max file size : 10 MB
-              </Text>
+              <Text style={styles.uploadText}>Download {namaFile}</Text>
             )}
           </View>
         )}
