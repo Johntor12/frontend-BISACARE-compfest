@@ -7,7 +7,12 @@ export default function ProgressCard() {
         source={require("../../../../assets/images/doctors.png")}
         style={styles.image}
       />
-      <View style={{ flex: 1 }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+        }}
+      >
         <Text style={styles.title}>Belum Ada Update Progress</Text>
         <Text style={styles.subtitle}>
           Ayo tunggu tawaran datang, sembari mengerjakan hal lainnya!
@@ -27,18 +32,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    width: 80,
-    height: 100,
+    width: 150,
+    aspectRatio: 179 / 268,
     resizeMode: "contain",
-    marginRight: 12,
   },
   title: {
     fontSize: 16,
     fontWeight: "600",
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+    textAlign: "center",
   },
 });

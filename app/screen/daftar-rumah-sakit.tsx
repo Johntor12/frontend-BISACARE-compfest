@@ -1,34 +1,40 @@
-import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ScreenContainer from "../src/components/ScreenContainer";
+import Colors from "../src/constants/Colors";
 
 const ScreenThree = () => {
   return (
-    <View style={{ flex: 1 }}>
-
-      <View style={{ padding: 16 }}>
-        <Text style={styles.title}>Coverage Display Interface</Text>
-        <Text style={{ marginBottom: 20 }}>
-          Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa ditanggung oleh asuransi.
+    <ScreenContainer variantColor="secondary">
+      <Text style={styles.subtitle}>
+        <Text style={{ fontWeight: "700", fontStyle: "italic" }}>
+          Coverage Display Interface{" "}
         </Text>
+        (Apa saja yang menjadi tanggungan)
+      </Text>
+      <Text style={styles.desc}>
+        Kami bantu cek apakah kondisimu bisa ditanggung oleh asuransi.
+      </Text>
 
-        <View style={styles.table}>
-          <Row label="Jenis Layanan" value="Rawat Jalan" />
-          <Row label="Deskripsi Layanan" value="MRI Otak, CT Scan" />
-          <Row label="Status Pertanggungan" value="Ditanggung" />
-          <Row label="Presentasi Pertanggungan" value="80%" />
-          <Row label="Limit Maksimum" value="Rp5.000.000 per tahun" />
-          <Row label="Sisa Kuota" value="Rp1.500.000" />
-          <Row label="Estimasi biaya keluar" value="Rp450.000" />
-          <Row label="Alasan status" value="Obat tidak masuk polis" />
-          <Row label="Tanggal Efektif Pertanggungan" value="1 Jan 2025 - 31 Des 2025" />
-          <Row label="Catatan Tambahan" value="Catatan Tambahan" />
-        </View>
-
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Lanjutkan Proses →</Text>
-        </TouchableOpacity>
+      <View style={styles.table}>
+        <Row label="Jenis Layanan" value="Rawat Jalan" />
+        <Row label="Deskripsi Layanan" value="MRI Otak, CT Scan" />
+        <Row label="Status Pertanggungan" value="Ditanggung" />
+        <Row label="Presentasi Pertanggungan" value="80%" />
+        <Row label="Limit Maksimum" value="Rp5.000.000 per tahun" />
+        <Row label="Sisa Kuota" value="Rp1.500.000" />
+        <Row label="Estimasi biaya keluar" value="Rp450.000" />
+        <Row label="Alasan status" value="Obat tidak masuk polis" />
+        <Row
+          label="Tanggal Efektif Pertanggungan"
+          value="1 Jan 2025 - 31 Des 2025"
+        />
+        <Row label="Catatan Tambahan" value="Catatan Tambahan" />
       </View>
-    </View>
+
+      <TouchableOpacity style={styles.button}>
+        <Text style={styles.buttonText}>Lanjutkan Proses →</Text>
+      </TouchableOpacity>
+    </ScreenContainer>
   );
 };
 
@@ -46,6 +52,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
+  subtitle: {
+    fontSize: 20,
+    color: "#fff",
+    marginBottom: 5,
+  },
+  desc: {
+    fontSize: 12,
+    color: "#fff",
+    marginBottom: 15,
+  },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -56,15 +72,16 @@ const styles = StyleSheet.create({
   cellLabel: { fontWeight: "bold", width: "45%" },
   cellValue: { width: "50%", textAlign: "right" },
   button: {
-    backgroundColor: "#0D3B66",
+    backgroundColor: Colors.primaryBlue700,
     padding: 15,
     borderRadius: 10,
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 40,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
-  }
+  },
 });
 
 export default ScreenThree;

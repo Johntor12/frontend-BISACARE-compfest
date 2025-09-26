@@ -23,9 +23,17 @@ export default function ClaimStats({
               <Text style={styles.detailText}>Detail</Text>
             </View>
           </View>
-          <View style={styles.ringRow}>
-            <View style={styles.ringBg} />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Text style={styles.percent}>{it.percent}%</Text>
+            <View style={styles.ringRow}>
+              <View style={styles.ringBg} />
+            </View>
           </View>
         </View>
       ))}
@@ -45,9 +53,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  title: { fontWeight: "700", color: Colors.text, maxWidth: "70%" },
+  title: {
+    fontWeight: "700",
+    color: Colors.text,
+    maxWidth: "70%",
+    marginRight: 4,
+  },
   detailPill: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryBlue700,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 10,
@@ -67,9 +80,9 @@ const styles = StyleSheet.create({
     height: SIZE,
     borderRadius: SIZE / 2,
     borderWidth: THICK,
-    borderColor: "#EDEBFF",
-    borderRightColor: "#B8A4FF",
-    transform: [{ rotateZ: "35deg" }],
+    borderRightColor: "#EDEBFF",
+    borderColor: "#B8A4FF",
+    transform: [{ rotateZ: "-180deg" }],
   },
   percent: { fontSize: 20, fontWeight: "800", color: "#0D1835" },
 });

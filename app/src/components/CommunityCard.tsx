@@ -1,8 +1,9 @@
-import React from "react";
+import { useRouter } from "expo-router";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import LihatSelengkapnyaButton from "./LihatSelengkapnyaButton"; // harus di-convert juga ke RN
 
 const CommunityServices = () => {
+  const router = useRouter();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Layanan Komunitas!</Text>
@@ -27,7 +28,12 @@ const CommunityServices = () => {
       </ScrollView>
 
       <View style={styles.buttonWrapper}>
-        <LihatSelengkapnyaButton />
+        <LihatSelengkapnyaButton
+          variant="secondary"
+          onPress={() => {
+            router.push("/screen/pilih-komunitas-kesehatan");
+          }}
+        />
       </View>
     </View>
   );
@@ -38,8 +44,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 900,
     alignSelf: "center",
-    padding: 24,
-    backgroundColor: "#f3f4f6", // bg-gray-100
+    marginTop: 20,
   },
   title: {
     fontSize: 20,

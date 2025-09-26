@@ -1,31 +1,91 @@
 // ClaimFormScreen.tsx
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button, TextInput } from "react-native-paper";
+import PhoneInput from "react-native-phone-number-input";
+import UploadFile from "../src/components/Home/UploadFile";
+import Modal from "../src/components/Modal";
+import ScreenContainer from "../src/components/ScreenContainer";
+import Colors from "../src/constants/Colors";
 
-const ClaimFormScreen = () => {
+interface DropDownItem {
+  label: string;
+  value: string;
+}
+interface DropDownFormProps {
+  dropDownHeader?: string;
+  dropDownArray?: DropDownItem[];
+}
+
+const serviceItems: DropDownItem[] = [
+  { label: "Rawat jalan", value: "rawat_jalan" },
+  { label: "Rawat inap", value: "rawat_inap" },
+  { label: "IGD", value: "igd" },
+  { label: "Lainnya", value: "lainnya" },
+];
+
+function DropDownForm({
+  dropDownHeader = "Pilih Layanan",
+  dropDownArray = serviceItems,
+}: DropDownFormProps) {
   const [serviceOpen, setServiceOpen] = useState(false);
   const [serviceValue, setServiceValue] = useState<string | null>(null);
+  // const [rekeningItems, setRekeningItems] = useState([
+  //   {label: "", value: ""}
+  // ])
   const [serviceItems, setServiceItems] = useState([
     { label: "Rawat jalan", value: "rawat_jalan" },
     { label: "Rawat inap", value: "rawat_inap" },
     { label: "IGD", value: "igd" },
     { label: "Lainnya", value: "lainnya" },
   ]);
+  return (
+    <>
+      <Text style={styles.label}>{dropDownHeader}</Text>
+      <DropDownPicker
+        listMode="SCROLLVIEW"
+        open={serviceOpen}
+        value={serviceValue}
+        items={dropDownArray}
+        setOpen={setServiceOpen}
+        setValue={setServiceValue}
+        setItems={setServiceItems}
+        placeholder="Select service"
+        style={styles.dropdown}
+      />
+    </>
+  );
+}
 
+const ClaimFormScreen = () => {
+  const rekeningItems: DropDownItem[] = [
+    { label: "BCA", value: "bca" },
+    { label: "MANDIRI", value: "mandiri" },
+    { label: "BNI", value: "bni" },
+    { label: "BRI", value: "bri" },
+    { label: "CIMB Niaga", value: "cimb_niaga" },
+    { label: "Permata Bank", value: "permata_bank" },
+    { label: "Bank Danamon", value: "bank_danamon" },
+    { label: "BSI", value: "bsi" },
+  ];
   const [ktpImage, setKtpImage] = useState<string | null>(null);
   const [asuransiImage, setAsuransiImage] = useState<string | null>(null);
-  
+  const phoneInput = useRef<PhoneInput>(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [formattedValue, setFormattedValue] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
   const router = useRouter();
 
   // Fungsi pilih gambar
   const pickImage = async (setter: (uri: string) => void) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: "images", // ← pakai string literal, bukan MediaTypeOptions
       allowsEditing: true,
+      aspect: [4, 3],
       quality: 0.7,
     });
 
@@ -35,121 +95,121 @@ const ClaimFormScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* Header */}
-      <View style={styles.header}>
-      </View>
-
+    <ScreenContainer customStyle={{ padding: 0 }}>
       {/* Card */}
-      <View style={styles.card}> q
-        <View style={styles.title}>
-          <Text style={{ fontWeight: "700" }}>Mari isi Data Dulu untuk Menerima Asuransi</Text>
+      <View style={styles.card}>
+        <View style={{ flexDirection: "row" }}>
+          <Text style={styles.headerText}>Mari Isi Data</Text>
+          <Text style={styles.subHeaderText}> dulu untuk </Text>
         </View>
+        <Text style={styles.subHeaderText}>Menerima Asuransi</Text>
         <Text style={styles.subtitle}>
-          Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa ditanggung oleh asuransi.
+          Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
+          ditanggung oleh asuransi.
         </Text>
-
         {/* Upload KTP */}
         <Text style={styles.label}>Scan/Upload Foto KTP</Text>
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage((uri) => setKtpImage(uri))}
-        >
-          {ktpImage ? (
-            <Image source={{ uri: ktpImage }} style={styles.uploadImage} />
-          ) : (
-            <Text style={styles.uploadText}>
-              Scan/Upload KTP terbarumu{"\n"}Max file size : 10 MB
-            </Text>
-          )}
-          </TouchableOpacity>
-
+        <UploadFile />
         {/* Upload Kartu Asuransi */}
         <Text style={styles.label}>Scan/Upload Kartu Asuransi</Text>
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage((uri) => setAsuransiImage(uri))}
-        >
-          {asuransiImage ? (
-            <Image source={{ uri: asuransiImage }} style={styles.uploadImage} />
-          ) : (
-            <Text style={styles.uploadText}>
-              Scan/Upload Kartu Asuransi{"\n"}Max file size : 10 MB
-            </Text>
-          )}
-        </TouchableOpacity>
-
+        <UploadFile />
         {/* Nomor Polis */}
-        <TextInput
-          mode="outlined"
-          label="Polis number"
-          left={<TextInput.Icon icon="credit-card" />}
-          style={styles.input}
-        />
-        <Text style={styles.hint}>
-          This is a hint text to help user.
+        <View style={{ flexDirection: "column" }}>
+          <Text style={{ fontWeight: "600" }}>Input nomor Polis</Text>
+          <View style={styles.inputWrapper}>
+            <Image
+              source={require("../../assets/images/payment_method_icon.png")}
+              style={styles.inputIcon}
+            />
+            <TextInput
+              mode="flat"
+              right={<TextInput.Icon icon="help-circle" />}
+              placeholder="Polis number"
+              style={styles.inputFlex}
+              underlineColor="transparent"
+              activeUnderlineColor="transparent"
+            />
+          </View>
+        </View>
+        <Text style={styles.hint}>This is a hint text to help user.</Text>
+        {/* Panduan */}
+        <Text style={{ fontWeight: "medium", fontSize: 10 }}>
+          Jika belum mendaftar atau membuat kartu asuransi atau polis, klik
+          tombol di bawah untuk melihat panduan pembuatan kartu asuransi
         </Text>
 
-        {/* Panduan */}
         <Button
           mode="contained-tonal"
-          onPress={() => {}}
-          contentStyle={{ flexDirection: "row-reverse" }}
+          onPress={() => {
+            router.push("/screen/chatbot");
+          }}
+          contentStyle={{
+            flexDirection: "row-reverse",
+            backgroundColor: Colors.primaryBlue700,
+          }}
           style={{ marginVertical: 10 }}
         >
-          <Text>Panduan Pembuatan Kartu Asuransi</Text>
+          <Text style={{ color: "white", fontSize: 12 }}>
+            Panduan Pembuatan Kartu Asuransi →
+          </Text>
         </Button>
-
         {/* Dropdown Layanan */}
-        <Text style={styles.label}>Pilih Layanan</Text>
-        <DropDownPicker
-          open={serviceOpen}
-          value={serviceValue}
-          items={serviceItems}
-          setOpen={setServiceOpen}
-          setValue={setServiceValue}
-          setItems={setServiceItems}
-          placeholder="Select service"
-          style={styles.dropdown}
-        />
-        <Text style={styles.hint}>This is a hint text to help user.</Text>
+        <DropDownForm />
 
+        <DropDownForm
+          dropDownHeader="Jenis Rekening"
+          dropDownArray={rekeningItems}
+        />
+
+        <Text style={styles.hint}>This is a hint text to help user.</Text>
         {/* Nomor HP */}
         <Text style={styles.label}>Nomor HP Aktif</Text>
-        <TextInput
-          mode="outlined"
-          label="Nomor HP"
-          keyboardType="phone-pad"
-          left={<TextInput.Icon icon="cellphone" />}
-          style={styles.input}
+        <PhoneInput
+          ref={phoneInput}
+          defaultValue={phoneNumber}
+          defaultCode="ID" // Default Indonesia (+62)
+          layout="first" // Dropdown dulu lalu input
+          onChangeText={(text) => setPhoneNumber(text)}
+          onChangeFormattedText={(text) => setFormattedValue(text)}
+          withDarkTheme={false}
+          withShadow
+          autoFocus
+          containerStyle={styles.phoneContainer}
+          textContainerStyle={styles.textInput}
         />
-        <Text style={styles.hint}>This is a hint text to help user.</Text>
 
+        <Text style={styles.hint}>This is a hint text to help user.</Text>
         {/* Input Keluhan */}
         <Text style={styles.label}>Input Keluhan</Text>
-        <TextInput
-          mode="outlined"
-          placeholder="Input keluhan kesehatanmu..."
-          multiline
-          numberOfLines={4}
-          style={[styles.input, { height: 120 }]}
-        />
+        <Text>
+          <TextInput
+            placeholder="Input keluhan kesehatanmu..."
+            multiline
+            numberOfLines={4}
+            style={[styles.input, { height: 120 }]}
+          />
+        </Text>
         <Text style={styles.hint}>Max 500 words</Text>
-
         {/* Button */}
         <Button
           mode="contained"
           style={styles.submitBtn}
           onPress={() => {
-            router.push("/screen/tunjukkan-slip")
+            setShowModal(true);
           }}
         >
-          <Text>
-            Lanjutkan Proses
-          </Text>
+          <Text>Lanjutkan Proses →</Text>
         </Button>
+        <Modal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          onFalse={() => setShowModal(false)}
+          onTrue={() => {
+            router.push("/screen/daftar-sistem-rumah-sakit");
+          }}
+        />
       </View>
-    </ScrollView>
+    </ScreenContainer>
   );
 };
 
@@ -171,6 +231,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
   },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  subHeaderText: {
+    fontSize: 20,
+    fontWeight: "400",
+    color: "#000",
+  },
+  descText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#666",
+  },
   card: {
     backgroundColor: "#fff",
     margin: 15,
@@ -184,9 +259,10 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: 11,
     color: "#444",
-    marginBottom: 15,
+    marginTop: 6,
+    marginBottom: 12,
   },
   label: {
     fontSize: 14,
@@ -196,10 +272,11 @@ const styles = StyleSheet.create({
   },
   uploadBox: {
     borderWidth: 1,
+    width: "100%",
+    aspectRatio: 362 / 213,
     borderStyle: "dashed",
     borderColor: "#aaa",
     borderRadius: 8,
-    height: 120,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,
@@ -213,9 +290,56 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "cover",
+    aspectRatio: 362 / 213,
   },
   input: {
-    marginBottom: 8,
+    width: "100%",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+  },
+  inputWithIcon: {
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 15,
+    backgroundColor: "#fff",
+    paddingHorizontal: 8,
+  },
+  inputIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
+    marginLeft: 8,
+  },
+  inputFlex: {
+    flex: 1,
+    backgroundColor: "transparent", // biar warnanya nyatu
+  },
+  phoneContainer: {
+    width: "100%",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  textInput: {
+    borderLeftWidth: 1,
+    borderLeftColor: "#ccc",
     backgroundColor: "#fff",
   },
   hint: {
@@ -229,6 +353,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   submitBtn: {
+    backgroundColor: Colors.primaryBlue700,
     marginTop: 20,
     paddingVertical: 6,
     borderRadius: 8,

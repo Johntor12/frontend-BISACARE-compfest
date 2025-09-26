@@ -1,135 +1,142 @@
 // app/claim-detail.tsx
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import ClaimProgressCard from "../src/components/Home/ClaimProgressCard";
 import ClaimStats from "../src/components/Home/ClaimStats";
 import ClaimTracker from "../src/components/Home/ClaimTracker";
-import CommunityCarousel from "../src/components/Home/CommunityCarousel";
+// import CommunityCarousel from "../src/components/Home/CommunityCarousel";
+import CommunityServices from "../src/components/CommunityCard";
 import FloatingChat from "../src/components/Home/FloatingChat";
 import SlipCard from "../src/components/Home/SlipCard";
 import SymptomsList from "../src/components/Home/SymptompsList";
 import SymptomsTabs from "../src/components/Home/SymptomsTabs";
 import TestimonialCard from "../src/components/Home/TestimonialCard";
+import ScreenContainer from "../src/components/ScreenContainer";
 import Colors from "../src/constants/Colors";
 
 export default function ClaimDetailScreen() {
+  const tabs = ["Diajukan", "Diproses", "Ditanggung", "Ditolak"];
+  const [activeTab, setActiveTab] = useState(tabs[0]);
+  const [symptoms, setSymptoms] = useState<string[]>([]);
+
+  // Dummy fetching simulasi backend
+  useEffect(() => {
+    const fetchData = async () => {
+      // nanti bisa diganti dengan fetch(`api/symptoms?status=${activeTab}`)
+      await new Promise((res) => setTimeout(res, 300)); // delay dummy
+      switch (activeTab) {
+        case "Diajukan":
+          setSymptoms([
+            "Heart Failure Indication",
+            "Heart Failure Indication",
+            "Heart Failure Indication",
+            "Heart Failure Indication",
+            "Heart Failure Indication",
+          ]);
+          break;
+        case "Diproses":
+          setSymptoms(["Sesak Napas", "Detak jantung tidak teratur"]);
+          break;
+        case "Ditanggung":
+          setSymptoms(["Flu Ringan", "Pusing Kepala"]);
+          break;
+        case "Ditolak":
+          setSymptoms(["Gejala tidak terdaftar"]);
+          break;
+        default:
+          setSymptoms([]);
+      }
+    };
+    fetchData();
+  }, [activeTab]);
+
   return (
-    <View style={{ flex: 1, backgroundColor: Colors.bg }}>
+    <ScreenContainer>
       {/* Hero */}
-      <View style={styles.hero}>
-        <Text style={styles.sub}>
+      {/* <Text style={styles.sub}>
           Stay updated with the progress of claim.{"\n"}Reach out to us for any
           help!
-        </Text>
-        {/* <Image
-          source={require("../assets/images/hero-claim.png")}
-          style={styles.heroArt}
-          resizeMode="contain"
-        /> */}
+        </Text> */}
+
+      {/* Progress Klaim */}
+      <View style={{ marginBottom: 40 }}>
+        <ClaimProgressCard progress={60} />
       </View>
 
-      <ScrollView
-        style={{ display: "flex", flexDirection: "column", gap: 12 }}
-        contentContainerStyle={{ padding: 16 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Progress Klaim */}
-        <View style={{ marginBottom: 40 }}>
-          <ClaimProgressCard progress={50} />
-        </View>
-
-        {/* Claim Tracker */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Claim Tracker</Text>
-          <ClaimTracker
-            steps={[
-              { label: "Dikirim", status: "done" },
-              { label: "Review", status: "done" },
-              { label: "Diterima", status: "active" },
-              { label: "Ditolak", status: "pending" },
-            ]}
-          />
-        </View>
-
-        {/* Slip digital & Aju banding */}
-        <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
-          <SlipCard title="Slip Digital" />
-          <SlipCard title="Aju Banding" />
-        </View>
-
-        {/* Stats 2 kartu donut */}
-        <ClaimStats
-          items={[
-            { title: "Ditanggung", percent: 80 },
-            { title: "Tanggung\nSendiri", percent: 80 },
+      {/* Claim Tracker */}
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>Claim Tracker</Text>
+        <ClaimTracker
+          steps={[
+            { label: "Dikirim", status: "done" },
+            { label: "Review", status: "done" },
+            { label: "Diterima", status: "active" },
+            { label: "Ditolak", status: "pending" },
           ]}
         />
+      </View>
 
-        {/* Keluhan/Gejala */}
-        <View style={{ marginTop: 16 }}>
-          <Text style={styles.sectionBig}>Keluhan atau Gejala Terakhir</Text>
-          <SymptomsTabs
-            tabs={["Diajukan", "Diproses", "Ditanggung", "Ditolak"]}
-          />
-          <SymptomsList
-            items={[
-              "Heart Failure Indication",
-              "Heart Failure Indication",
-              "Heart Failure Indication",
-              "Heart Failure Indication",
-              "Heart Failure Indication",
-            ]}
-          />
-        </View>
+      {/* Slip digital & Aju banding */}
+      <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
+        <SlipCard title="Slip Digital" />
+        <SlipCard title="Aju Banding" />
+      </View>
 
-        {/* Layanan Komunitas */}
-        <View style={{ marginTop: 20 }}>
+      {/* Stats */}
+      <ClaimStats
+        items={[
+          { title: "Ditanggung", percent: 80 },
+          { title: "Tanggung\nSendiri", percent: 80 },
+        ]}
+      />
+
+      {/* Keluhan/Gejala */}
+      <View style={{ marginTop: 16 }}>
+        <Text style={styles.sectionBig}>Keluhan atau Gejala Terakhir</Text>
+        <SymptomsTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+        <SymptomsList items={symptoms} />
+      </View>
+
+      {/* Layanan Komunitas */}
+      {/* <View style={{ marginTop: 20 }}>
           <Text style={styles.sectionBig}>Layanan Komunitas!</Text>
           <CommunityCarousel />
-        </View>
+        </View> */}
+      <CommunityServices />
 
-        {/* CTA Lihat Selengkapnya */}
-        <View style={{ alignItems: "center", marginTop: 16 }}>
+      {/* CTA Lihat Selengkapnya */}
+      {/* <View style={{ alignItems: "center", marginTop: 16 }}>
           <View style={styles.ctaOutline}>
             <Text style={styles.ctaText}>Lihat Selengkapnya</Text>
             <Text style={styles.ctaArrow}>↗</Text>
           </View>
-        </View>
+        </View> */}
 
-        {/* Testimoni */}
+      {/* Testimoni */}
+      <View style={{ flexDirection: "column" }}>
         <View style={{ marginTop: 24 }}>
           <TestimonialCard />
         </View>
-      </ScrollView>
 
-      {/* Tombol chat mengambang */}
-      <FloatingChat />
-    </View>
+        {/* Floating Chat */}
+        <FloatingChat />
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
   hero: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 56,
-  },
-  hello: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "800",
+    backgroundColor: Colors.primary500,
+    zIndex: 10,
   },
   sub: {
     color: "#EAF7FF",
     lineHeight: 18,
-  },
-  heroArt: {
-    position: "absolute",
-    right: 0,
-    bottom: -12,
-    width: 180,
-    height: 120,
-    opacity: 0.9,
   },
   sectionCard: {
     marginTop: -12,
@@ -141,7 +148,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: "#003A53",
   },
   sectionTitle: { fontWeight: "700", color: Colors.text, marginBottom: 12 },
   sectionBig: {
@@ -150,7 +157,6 @@ const styles = StyleSheet.create({
     color: Colors.textDark,
     marginBottom: 10,
   },
-  caption: { color: Colors.muted, marginBottom: 12 },
   ctaOutline: {
     flexDirection: "row",
     alignItems: "center",
@@ -158,10 +164,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: Colors.primary,
+    borderColor: Colors.primary500,
     backgroundColor: "#fff",
     gap: 8,
   },
-  ctaText: { color: Colors.primary, fontWeight: "700" },
-  ctaArrow: { color: Colors.primary, fontSize: 16, marginTop: -2 },
+  ctaText: { color: Colors.primary500, fontWeight: "700" },
+  ctaArrow: { color: Colors.primary500, fontSize: 16, marginTop: -2 },
 });
