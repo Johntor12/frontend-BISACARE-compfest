@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useKeluhan } from "../context/KeluhanContext";
 import CustomButton from "../src/components/Buttons/CustomButton";
 import KemungkinanClaim from "../src/components/Home/KemungkinanClaim";
 import VoiceOverSection from "../src/components/Home/VoiceOverSection";
@@ -37,6 +38,8 @@ export default function InputKeluhanScreen() {
 
   const [claimData, setClaimData] = useState<ClaimData | null>(null);
 
+  const { keluhan } = useKeluhan();
+
   const router = useRouter();
 
   const handleClaim = () => {
@@ -51,30 +54,27 @@ export default function InputKeluhanScreen() {
     setLoading(true);
     setShowClaim(true);
 
-    // const fetchData = async () => {
-    //   try {
-    //     const res = await fetch("http://192.168.0.108:8000/claim");
-    //     if (!res.ok) throw new Error("Failed to fetch");
-    //     const json = await res.json();
+    // try {
+    //   const res = await fetch(`${process.env.AI_API_URL}/cek-tanggapan`, {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ text_keluhan: keluhan }),
+    //   });
 
-    //     setTimeout(() => {
-    //       setClaimData({
-    //         percentage: json.percentage ?? 0,
-    //         dapatDiklaim: json.dapatDiklaim ?? false,
-    //         kemungkinanDiagnosis:
-    //           json.kemungkinanDiagnosis ?? dummyData.kemungkinanDiagnosis,
-    //         polisMenanggung: json.polisMenanggung ?? dummyData.polisMenanggung,
-    //       });
-    //     });
-    //   } catch (err) {
-    //     console.log("Error fetching claim:", err);
-    //     setClaimData(dummyData);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+    //   if (!res.ok) throw new Error("Failed to fetch");
+    //   const json = await res.json();
 
-    // Simulasi fetch 1 detik
+    // setClaimData({
+    //   percentage: json.percentage ?? dummyData.percentage,
+    //   dapatDiklaim: json.dapatDiklaim ?? dummyData.dapatDiklaim,
+    //   kemungkinanDiagnosis: json.kemungkinanDiagnosis ?? dummyData.kemungkinanDiagnosis,
+    //   polisMenanggung: json.polisMenanggung ?? dummyData.polisMenanggung,
+    // });
+    // } catch (err) {
+    //   console.log("Error fetching claim:", err);
+    // } finally {
+    //   setLoading(false);
+    // }
     setTimeout(() => {
       setClaimData(dummyData);
       setLoading(false);

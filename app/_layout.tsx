@@ -11,6 +11,7 @@ import "react-native-reanimated";
 import { AuthProvider } from "./context/AuthContext";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { KeluhanProvider } from "./context/KeluhanContext";
 
 // interface AppHeaderProps {
 //   show?: boolean;   // default true
@@ -32,14 +33,16 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          {/* Auth stack */}
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="screen" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
+        <KeluhanProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            {/* Auth stack */}
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="screen" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </KeluhanProvider>
       </AuthProvider>
     </ThemeProvider>
   );

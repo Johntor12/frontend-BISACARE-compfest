@@ -49,7 +49,7 @@ function DropDownForm({
         listMode="SCROLLVIEW"
         open={serviceOpen}
         value={serviceValue}
-        items={serviceItems}
+        items={dropDownArray}
         setOpen={setServiceOpen}
         setValue={setServiceValue}
         setItems={setServiceItems}

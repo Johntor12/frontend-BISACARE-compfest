@@ -1,12 +1,17 @@
-// ClaimFormScreen.tsx
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Button, TextInput } from "react-native-paper";
 import PhoneInput from "react-native-phone-number-input";
-import UploadFile from "../src/components/Home/UploadFile";
 import Modal from "../src/components/Modal";
 import ScreenContainer from "../src/components/ScreenContainer";
 import Colors from "../src/constants/Colors";
@@ -15,32 +20,16 @@ interface DropDownItem {
   label: string;
   value: string;
 }
-interface DropDownFormProps {
-  dropDownHeader?: string;
-  dropDownArray?: DropDownItem[];
-}
-
-const serviceItems: DropDownItem[] = [
-  { label: "Rawat jalan", value: "rawat_jalan" },
-  { label: "Rawat inap", value: "rawat_inap" },
-  { label: "IGD", value: "igd" },
-  { label: "Lainnya", value: "lainnya" },
-];
 
 function DropDownForm({
-  dropDownHeader = "Pilih Layanan",
-  dropDownArray = [
-    { label: "Rawat jalan", value: "rawat_jalan" },
-    { label: "Rawat inap", value: "rawat_inap" },
-    { label: "IGD", value: "igd" },
-    { label: "Lainnya", value: "lainnya" },
-  ],
-}: DropDownFormProps) {
+  dropDownHeader,
+  dropDownArray,
+}: {
+  dropDownHeader: string;
+  dropDownArray: DropDownItem[];
+}) {
   const [serviceOpen, setServiceOpen] = useState(false);
   const [serviceValue, setServiceValue] = useState<string | null>(null);
-  // const [rekeningItems, setRekeningItems] = useState([
-  //   {label: "", value: ""}
-  // ])
   const [serviceItems, setServiceItems] = useState(dropDownArray);
 
   return (
@@ -54,7 +43,7 @@ function DropDownForm({
         setOpen={setServiceOpen}
         setValue={setServiceValue}
         setItems={setServiceItems}
-        placeholder="Select service"
+        placeholder="Select option"
         style={styles.dropdown}
       />
     </>
@@ -72,8 +61,12 @@ const DataDiriAsuransiScreen = () => {
     { label: "Bank Danamon", value: "bank_danamon" },
     { label: "BSI", value: "bsi" },
   ];
+
   const [ktpImage, setKtpImage] = useState<string | null>(null);
   const [asuransiImage, setAsuransiImage] = useState<string | null>(null);
+  const [polisNumber, setPolisNumber] = useState("");
+  const [rekeningNumber, setRekeningNumber] = useState("");
+  const [keluhan, setKeluhan] = useState("");
   const phoneInput = useRef<PhoneInput>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [formattedValue, setFormattedValue] = useState("");
@@ -85,7 +78,7 @@ const DataDiriAsuransiScreen = () => {
   // Fungsi pilih gambar
   const pickImage = async (setter: (uri: string) => void) => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images", // ← pakai string literal, bukan MediaTypeOptions
+      mediaTypes: "images",
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
@@ -96,18 +89,82 @@ const DataDiriAsuransiScreen = () => {
     }
   };
 
+  // 🔹 Submit klaim
+  const handleSubmit = async () => {
+    if (!ktpImage || !asuransiImage) {
+      Alert.alert("Error", "Harap upload KTP dan Kartu Asuransi");
+      return;
+    }
+
+    try {
+      let formData = new FormData();
+      formData.append("policy_number", polisNumber);
+      formData.append("rekening_type", "bca"); // sementara static, bisa ambil dari dropdown
+      formData.append("rekening_number", rekeningNumber);
+      formData.append("service_type", "rawat_inap"); // sementara static
+      formData.append("phone_number", formattedValue);
+      formData.append("complaint", keluhan);
+      formData.append("other_service", "");
+
+      formData.append("ktp_file", {
+        uri: ktpImage,
+        type: "image/jpeg",
+        name: "ktp.jpg",
+      } as any);
+
+      formData.append("insurance_card_file", {
+        uri: asuransiImage,
+        type: "image/jpeg",
+        name: "insurance.jpg",
+      } as any);
+
+      // 1️⃣ Kirim ke backend
+      const res = await fetch(`${process.env.BACKEND_URL}/insuranceform`, {
+        method: "POST",
+        body: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const data = await res.json();
+      console.log("InsuranceForm created:", data);
+
+      // 2️⃣ Upload KTP ke AI
+      let aiFormData = new FormData();
+      aiFormData.append("file", {
+        uri: ktpImage,
+        type: "image/jpeg",
+        name: "ktp.jpg",
+      } as any);
+
+      const aiRes = await fetch(`${process.env.AI_API_URL}/scan-ktp`, {
+        method: "POST",
+        body: aiFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const aiData = await aiRes.json();
+      console.log("AI result:", aiData);
+
+      setshowFirstModal(true);
+    } catch (err) {
+      console.error("Upload gagal:", err);
+      Alert.alert("Error", "Upload gagal. Cek koneksi atau server backend.");
+    }
+  };
+
   return (
     <ScreenContainer customStyle={{ padding: 0 }}>
-      {/* Card */}
       <View style={styles.card}>
         <View style={{ flexDirection: "row" }}>
-          <Text style={styles.headerText}>Data diri</Text>
-          <Text style={styles.subHeaderText}> untuk Menerima </Text>
-        </View>
-        <Text style={styles.subHeaderText}>Transaksi</Text>
+          {" "}
+          <Text style={styles.headerText}>Data diri</Text>{" "}
+          <Text style={styles.subHeaderText}> untuk Menerima </Text>{" "}
+        </View>{" "}
+        <Text style={styles.subHeaderText}>Transaksi</Text>{" "}
         <Text style={styles.subtitle}>
+          {" "}
           Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
-          ditanggung oleh asuransi.
+          ditanggung oleh asuransi.{" "}
         </Text>
         {/* Upload KTP */}
         <Text style={styles.label}>Scan/Upload Foto KTP</Text>
@@ -123,7 +180,7 @@ const DataDiriAsuransiScreen = () => {
             >
               <Image source={require("../../assets/images/plus.png")} />
               <Text style={styles.uploadText}>
-                Scan/Upload KTP terbarumu{"\n"}Max file size : 10 MB
+                Scan/Upload Kartu KTP{"\n"}Max file size : 10 MB
               </Text>
             </View>
           )}
@@ -142,93 +199,58 @@ const DataDiriAsuransiScreen = () => {
             >
               <Image source={require("../../assets/images/plus.png")} />
               <Text style={styles.uploadText}>
-                Scan/Upload Kartu Asuransi{"\n"}Max file size : 10 MB
+                Scan/Upload Kartu KTP{"\n"}Max file size : 10 MB
               </Text>
             </View>
           )}
         </TouchableOpacity>
         {/* Nomor Polis */}
-        <View style={{ flexDirection: "column" }}>
-          <Text style={{ fontWeight: "600" }}>Input nomor Polis</Text>
-          <View style={styles.inputWrapper}>
-            <Image
-              source={require("../../assets/images/payment_method_icon.png")}
-              style={styles.inputIcon}
-            />
-            <TextInput
-              mode="flat"
-              right={<TextInput.Icon icon="help-circle" />}
-              placeholder="Polis number"
-              style={styles.inputFlex}
-              underlineColor="transparent"
-              activeUnderlineColor="transparent"
-            />
-          </View>
-        </View>
-        <Text style={styles.hint}>This is a hint text to help user.</Text>
-        {/* Panduan */}
-
-        {/* Dropdown Layanan */}
-        <DropDownForm />
-
-        <DropDownForm
-          dropDownHeader="Jenis Rekening"
-          dropDownArray={rekeningItems}
+        <TextInput
+          placeholder="Nomor Polis"
+          value={polisNumber}
+          onChangeText={setPolisNumber}
+          style={styles.input}
         />
-
-        <Text style={styles.hint}>This is a hint text to help user.</Text>
-        {/* Nomor HP */}
-        <Text style={styles.label}>Nomor HP Aktif</Text>
+        {/* No HP */}
         <PhoneInput
           ref={phoneInput}
           defaultValue={phoneNumber}
-          defaultCode="ID" // Default Indonesia (+62)
-          layout="first" // Dropdown dulu lalu input
+          defaultCode="ID"
+          layout="first"
           onChangeText={(text) => setPhoneNumber(text)}
           onChangeFormattedText={(text) => setFormattedValue(text)}
-          withDarkTheme={false}
-          withShadow
-          autoFocus
           containerStyle={styles.phoneContainer}
           textContainerStyle={styles.textInput}
         />
-
-        <Text style={styles.hint}>This is a hint text to help user.</Text>
         {/* Input Keluhan */}
-        <Text style={styles.label}>Input Keluhan</Text>
-        <Text>
+        <Text style={{ flex: 1, width: "100%" }}>
           <TextInput
-            placeholder="Input keluhan kesehatanmu..."
+            placeholder="Keluhan"
             multiline
             numberOfLines={4}
+            value={keluhan}
+            onChangeText={setKeluhan}
             style={[styles.input, { height: 120 }]}
           />
         </Text>
-        <Text style={styles.hint}>Max 500 words</Text>
-
-        {/* Input nOmor Rekening */}
-        <Text style={styles.label}>Nomor Rekening</Text>
-        <Text>
+        {/* Nomor Rekening */}
+        <Text style={{ flex: 1, width: "100%" }}>
           <TextInput
-            placeholder="012345678910"
-            style={[styles.rekeningInput]}
-            underlineColor="transparent"
+            placeholder="Nomor Rekening"
+            value={rekeningNumber}
+            onChangeText={setRekeningNumber}
+            style={styles.input}
           />
         </Text>
-        <Text style={styles.hint}>Max 500 words</Text>
-
-        <UploadFile namaFile="Upload Slip" />
-
-        {/* Button */}
+        {/* Button Submit */}
         <Button
           mode="contained"
           style={styles.submitBtn}
-          onPress={() => {
-            setshowFirstModal(true);
-          }}
+          onPress={handleSubmit}
         >
           <Text>Lanjutkan Proses →</Text>
         </Button>
+        {/* Modal */}
         <Modal
           visible={showFirstModal}
           onClose={() => setshowFirstModal(false)}
@@ -236,9 +258,7 @@ const DataDiriAsuransiScreen = () => {
           subtitle="Klaim anda diproses rata-rata dalam 3-5 hari kerja"
           falseText="Tidak"
           trueText="Lanjut"
-          onFalse={() => {
-            setshowFirstModal(false);
-          }}
+          onFalse={() => setshowFirstModal(false)}
           onTrue={() => {
             setshowFirstModal(false);
             setShowSecondModal(true);
@@ -251,9 +271,7 @@ const DataDiriAsuransiScreen = () => {
           subtitle="Klik lanjut untuk mengajukan banding"
           falseText="Tidak"
           trueText="Lanjut"
-          onFalse={() => {
-            setShowSecondModal(false);
-          }}
+          onFalse={() => setShowSecondModal(false)}
           onTrue={() => {
             router.push("/screen/chatbot");
             setShowSecondModal(false);
@@ -267,36 +285,8 @@ const DataDiriAsuransiScreen = () => {
 export default DataDiriAsuransiScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f3f8fb",
-  },
-  header: {
-    backgroundColor: "#0a74b9",
-    padding: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  subHeaderText: {
-    fontSize: 20,
-    fontWeight: "400",
-    color: "#000",
-  },
-  descText: {
-    marginTop: 4,
-    fontSize: 12,
-    color: "#666",
-  },
+  headerText: { fontSize: 20, fontWeight: "bold", color: "#000" },
+  subHeaderText: { fontSize: 20, fontWeight: "400", color: "#000" },
   card: {
     backgroundColor: "#fff",
     margin: 15,
@@ -304,47 +294,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     elevation: 3,
   },
-  title: {
-    fontSize: 18,
-    marginBottom: 5,
-    lineHeight: 22,
-  },
-  subtitle: {
-    fontSize: 11,
-    color: "#444",
-    marginTop: 6,
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginTop: 12,
-    marginBottom: 6,
-  },
+  label: { fontSize: 14, fontWeight: "600", marginTop: 12, marginBottom: 6 },
   uploadBox: {
     borderWidth: 1,
-    width: "100%",
-    aspectRatio: 362 / 213,
     borderStyle: "dashed",
     borderColor: "#aaa",
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    height: 150,
     marginBottom: 15,
   },
-  uploadText: {
-    fontSize: 13,
-    color: "#555",
-    textAlign: "center",
-  },
-  uploadImage: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
-    aspectRatio: 362 / 213,
-  },
+  subtitle: { fontSize: 11, color: "#444", marginTop: 6, marginBottom: 12 },
+  uploadImage: { width: "100%", height: "100%", resizeMode: "cover" },
   input: {
-    justifyContent: "center",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -352,72 +315,32 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: "#fff",
   },
-  inputWithIcon: {
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 15,
-    backgroundColor: "#fff",
-    paddingHorizontal: 8,
-  },
-  inputIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: "contain",
-    marginLeft: 8,
-  },
-  inputFlex: {
-    flex: 1,
-    backgroundColor: "transparent", // biar warnanya nyatu
-  },
   phoneContainer: {
     width: "100%",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
   },
+  uploadText: {
+    fontSize: 13,
+    color: "#555",
+    textAlign: "center",
+  },
   textInput: {
     borderLeftWidth: 1,
     borderLeftColor: "#ccc",
     backgroundColor: "#fff",
-  },
-  rekeningInput: {
-    flex: 1,
-    width: "100%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    backgroundColor: "#fff",
-  },
-  hint: {
-    fontSize: 12,
-    color: "#777",
-    marginBottom: 12,
-  },
-  dropdown: {
-    borderColor: "#ccc",
-    borderRadius: 8,
-    marginBottom: 8,
-    zIndex: 10,
   },
   submitBtn: {
     backgroundColor: Colors.primaryBlue700,
     marginTop: 20,
     paddingVertical: 6,
     borderRadius: 8,
+  },
+  dropdown: {
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 8,
+    zIndex: 10,
   },
 });
