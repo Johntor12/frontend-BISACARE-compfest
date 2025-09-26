@@ -2,17 +2,25 @@
   "expo": {
     "name": "Frontend_BISACARE_compfest",
     "slug": "bisacare-mobile-testing",
+    "owner": "johntor12",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "frontendbisacarecompfest",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.johntor12.bisacaremobiletesting",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "android": {
@@ -24,8 +32,11 @@
       "package": "com.anonymous.Frontend_BISACARE_compfest",
       "permissions": [
         "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -68,6 +79,8 @@
         "projectId": "95e17d63-6f64-4dae-ac17-2cc4ce5ad829"
       }
     },
-    "owner": "johntor12"
+    "updates": {
+      "url": "https://u.expo.dev/95e17d63-6f64-4dae-ac17-2cc4ce5ad829"
+    }
   }
 }

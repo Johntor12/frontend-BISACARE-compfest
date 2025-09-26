@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import RumahSakitCard from "../src/components/Registration/RumahSakitCard";
 import ScreenContainer from "../src/components/ScreenContainer";
@@ -40,7 +41,92 @@ const DATA_RS = [
   },
 ];
 
+const fetchRumahSakit = async (bodyParams: any) => {
+  // Simulasi delay API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        {
+          id: "1",
+          name: "RS. Harapan Sehat",
+          hours: "Open 24 Hours",
+          phone: "(021) 123456",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+        {
+          id: "2",
+          name: "RS. Kasih Ibu",
+          hours: "Open 24 Hours",
+          phone: "(021) 654321",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+        {
+          id: "3",
+          name: "RS. Bhakti Mulia",
+          hours: "Open 24 Hours",
+          phone: "(021) 778899",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+      ]);
+    }, 1000); // 1 detik delay
+  });
+};
+
 export default function PilihRumahSakit() {
+  const [rumahSakit, setRumahSakit] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // const API_URL = process.env.AI_API_URL;
+
+  // useEffect(() => {
+  //   const bodyParams = {
+  //     nama: "Budi",
+  //     kelurahan_desa: "Kelapa Dua",
+  //     kecamatan: "Cengkareng",
+  //     jenis_layanan: "Rawat Jalan",
+  //     keluhan: "Demam tinggi",
+  //     nama_asuransi: "BPJS",
+  //     nama_provinsi: "DKI Jakarta",
+  //     nama_daerah: "Jakarta Barat",
+  //     top_n: 5,
+  //   };
+
+  //   const fetchRumahSakit = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(`${API_URL}/rekomendasi-rumah-sakit`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(bodyParams),
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error(`Error status: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("Hasil dari API:", data);
+
+  //       // pastikan data berupa array rumah sakit
+  //       setRumahSakit(data || []);
+  //     } catch (error) {
+  //       console.error("Gagal fetch rumah sakit:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchRumahSakit();
+  // }, []);
+
+  // Filter pencarian
+  const filteredData = rumahSakit.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <ScreenContainer scrollable={false}>
       {/* Header */}
@@ -55,7 +141,12 @@ export default function PilihRumahSakit() {
       </Text>
 
       {/* Search Bar */}
-      <TextInput style={styles.searchInput} placeholder="Cari Rumah Sakit..." />
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Cari Rumah Sakit..."
+        value={search}
+        onChangeText={setSearch}
+      />
 
       {/* List Rumah Sakit */}
       <FlatList

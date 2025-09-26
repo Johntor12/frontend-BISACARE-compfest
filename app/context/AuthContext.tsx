@@ -26,7 +26,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(null);
-  const backendUrl = "http://192.168.1.6:8000";
+  const backendUrl =
+    "https://ppk.grayhill-39d1a131.southeastasia.azurecontainerapps.io";
 
   // 🔄 Cek token di AsyncStorage saat app dibuka
   useEffect(() => {

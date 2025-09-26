@@ -4,19 +4,23 @@ import Colors from "../../constants/Colors";
 import VoiceOverButton from "../Buttons/VoiceOverButton";
 
 interface VoiceOverSectionProps {
-  onCekTanggapan?: () => void;
+  onCekTanggapan?: (text: string) => void;
 }
 
 export default function VoiceOverSection({
   onCekTanggapan,
 }: VoiceOverSectionProps) {
+  const [hasilAI, setHasilAI] = useState<string>("");
   const [adaRecording, setAdaRecording] = useState(false);
 
   return (
     <>
-      <VoiceOverButton></VoiceOverButton>
+      <VoiceOverButton onResult={(text) => setHasilAI(text)} />
       {/* Cek Tanggapan */}
-      <Pressable style={styles.cekTanggapanButton} onPress={onCekTanggapan}>
+      <Pressable
+        style={styles.cekTanggapanButton}
+        onPress={() => onCekTanggapan?.(hasilAI)}
+      >
         <Text style={styles.cekTanggapanButtonText}>Cek Tanggapan</Text>
       </Pressable>
     </>

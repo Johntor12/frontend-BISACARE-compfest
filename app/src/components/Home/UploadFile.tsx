@@ -1,16 +1,7 @@
 import { useAuth } from "@/app/context/AuthContext";
-import * as FileSystem from "expo-file-system";
 import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
-import * as Sharing from "expo-sharing";
 import { useState } from "react";
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export interface UploadFileProps {
   namaFile?: string;
@@ -63,45 +54,45 @@ export default function UploadFile({
   // =====================
   // Dummy download handler
   // =====================
-  const handleDownload = async () => {
-    try {
-      // pakai endpoint dummy
-      const url = `/ajubanding/file-dummy.pdf`;
-      const response = await fetchWithAuth(url);
+  // const handleDownload = async () => {
+  //   try {
+  //     // pakai endpoint dummy
+  //     const url = `/ajubanding/file-dummy.pdf`;
+  //     const response = await fetchWithAuth(url);
 
-      if (!response.ok) {
-        throw new Error(`Gagal download: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`Gagal download: ${response.status}`);
+  //     }
 
-      const blob = await response.blob();
-      const fileReader = new FileReader();
+  //     const blob = await response.blob();
+  //     const fileReader = new FileReader();
 
-      fileReader.onload = async () => {
-        try {
-          const base64Data = (fileReader.result as string).split(",")[1];
-          const fileUri = FileSystem.documentDirectory + `file_dummy.pdf`;
+  //     fileReader.onload = async () => {
+  //       try {
+  //         const base64Data = (fileReader.result as string).split(",")[1];
+  //         const fileUri = FileSystem.documentDirectory + `file_dummy.pdf`;
 
-          await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-            encoding: "base64",
-          });
+  //         await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+  //           encoding: "base64",
+  //         });
 
-          if (await Sharing.isAvailableAsync()) {
-            await Sharing.shareAsync(fileUri);
-          } else {
-            Alert.alert("Sukses", `File berhasil diunduh ke ${fileUri}`);
-          }
-        } catch (err) {
-          console.error("❌ Error write file:", err);
-          Alert.alert("Error", "Gagal menyimpan file");
-        }
-      };
+  //         if (await Sharing.isAvailableAsync()) {
+  //           await Sharing.shareAsync(fileUri);
+  //         } else {
+  //           Alert.alert("Sukses", `File berhasil diunduh ke ${fileUri}`);
+  //         }
+  //       } catch (err) {
+  //         console.error("❌ Error write file:", err);
+  //         Alert.alert("Error", "Gagal menyimpan file");
+  //       }
+  //     };
 
-      fileReader.readAsDataURL(blob);
-    } catch (err: any) {
-      console.error("❌ Download error:", err);
-      Alert.alert("Error", "Gagal mengunduh file");
-    }
-  };
+  //     fileReader.readAsDataURL(blob);
+  //   } catch (err: any) {
+  //     console.error("❌ Download error:", err);
+  //     Alert.alert("Error", "Gagal mengunduh file");
+  //   }
+  // };
 
   return (
     <View>
