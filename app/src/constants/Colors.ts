@@ -1,7 +1,11 @@
 export default {
-  primary: "#0391CE",
-  primaryBlue700:"#005D85",
+  primary200: "#B4C9FF",
+  primary500: "#0391CE",
+  primaryBlue700: "#005D85",
   primaryDark: "#0079AB",
+  secondary50: "#ECF1FF",
+  secondary900: "#00164F",
+  tertiary100: "#DBC7FF",
   accentSoft: "#DEF3FF",
   bg: "#F5F7FB",
   text: "#101828",

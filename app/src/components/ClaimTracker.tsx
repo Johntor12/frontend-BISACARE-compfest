@@ -1,4 +1,3 @@
-import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg"; // expo install react-native-svg
 
@@ -47,7 +46,7 @@ const ClaimTracker = () => {
       {/* Steps Row */}
       <View style={styles.stepsRow}>
         {steps.map((step, index) => (
-          <React.Fragment key={step.id}>
+          <View key={step.id}>
             {/* Circle with checkmark */}
             <View
               style={[
@@ -68,7 +67,7 @@ const ClaimTracker = () => {
 
             {/* Connector line (skip after last step) */}
             {index < steps.length - 1 && <View style={styles.connector} />}
-          </React.Fragment>
+          </View>
         ))}
       </View>
 

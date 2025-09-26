@@ -1,24 +1,21 @@
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import {
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ChatArea, { Message } from "../src/components/ChatArea";
+import Modal from "../src/components/Modal";
+import ScreenContainer from "../src/components/ScreenContainer";
 
-interface Message {
-  id: string;
-  text: string;
-  sender: "bot" | "user";
+interface ChatbotScreenProps {
+  variant?: "primary" | "secondary";
 }
 
-const ChatbotScreen = () => {
+export default function ChatbotScreen({
+  variant = "secondary",
+}: ChatbotScreenProps) {
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -26,158 +23,100 @@ const ChatbotScreen = () => {
       sender: "bot",
     },
   ]);
-  const [input, setInput] = useState("");
-
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: input,
-      sender: "user",
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
-    setInput("");
-
-    // simulasi balasan bot
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          text: "Ini adalah balasan otomatis dari bot.",
-          sender: "bot",
-        },
-      ]);
-    }, 1000);
-  };
-
-  const renderMessage = ({ item }: { item: Message }) => {
-    const isUser = item.sender === "user";
-    return (
-      <View
-        style={[
-          styles.messageBubble,
-          isUser ? styles.userBubble : styles.botBubble,
-        ]}
-      >
-        <Text style={isUser ? styles.userText : styles.botText}>
-          {item.text}
-        </Text>
-      </View>
-    );
-  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.container}
+    <ScreenContainer
+      scrollable={false}
+      variantColor="secondary"
+      customStyle={{ padding: 0 }}
+    >
+      <LinearGradient
+        colors={["#5785FF", "#3737FA", "#5301DD"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0.14, 0.54, 1]}
+        style={[
+          styles.gradientWrapper,
+          { height: 2100 },
+          variant === "primary" && { padding: 16 },
+        ]}
       >
-        {/* Header (bisa tambahkan gradient atau image background di sini) */}
-        {/* <View style={styles.header}>
-          <Text style={styles.headerText}>Chatbot</Text>
-        </View> */}
+        {variant === "secondary" && (
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>
+              Conversational AI Claim Helper
+            </Text>
+            <Text style={styles.headerSubtitle}>
+              Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu
+              bisa ditanggung oleh asuransi.
+            </Text>
+          </View>
+        )}
 
-        {/* Chat messages */}
-        <FlatList
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderMessage}
-          contentContainerStyle={styles.chatContainer}
+        {/* Chat Area */}
+        <ChatArea messages={messages} setMessages={setMessages} />
+
+        {variant === "secondary" && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setShowModal(true)}
+          >
+            <Text style={styles.buttonText}>Lanjutkan Proses →</Text>
+          </TouchableOpacity>
+        )}
+      </LinearGradient>
+
+      {showModal && (
+        <Modal
+          visible={showModal}
+          title="Ingin Request Tambahan?"
+          onClose={() => setShowModal(false)}
+          onTrue={() => router.push("/screen/claim-form")}
+          falseText="Tidak"
+          trueText="Tambah"
         />
-
-        {/* Input Bar */}
-        <View style={styles.inputContainer}>
-          <TouchableOpacity style={styles.iconButton}>
-            <MaterialCommunityIcons name="view-grid-outline" size={22} color="#3b3b98" />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Type your message..."
-            value={input}
-            onChangeText={setInput}
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-            <Ionicons name="send" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      )}
+    </ScreenContainer>
   );
-};
-
-export default ChatbotScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
+  gradientWrapper: {
     flex: 1,
-    backgroundColor: "#fdfdfd",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    zIndex: 10,
   },
-  header: {
-    height: 60,
-    backgroundColor: "#2e86de",
+  headerContainer: {
+    flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    fontStyle: "italic",
     borderBottomLeftRadius: 15,
     borderBottomRightRadius: 15,
+    marginBottom: 16,
+    gap: 8,
   },
-  headerText: {
+  headerTitle: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "bold",
   },
-  chatContainer: {
-    padding: 12,
-    flexGrow: 1,
-    justifyContent: "flex-start",
-  },
-  messageBubble: {
-    maxWidth: "75%",
-    padding: 10,
-    borderRadius: 15,
-    marginVertical: 5,
-  },
-  userBubble: {
-    backgroundColor: "#2e86de",
-    alignSelf: "flex-end",
-    borderBottomRightRadius: 0,
-  },
-  botBubble: {
-    backgroundColor: "#e6e6e6",
-    alignSelf: "flex-start",
-    borderBottomLeftRadius: 0,
-  },
-  userText: {
+  headerSubtitle: {
     color: "#fff",
+    fontSize: 14,
   },
-  botText: {
-    color: "#000",
-  },
-  inputContainer: {
-    flexDirection: "row",
+  button: {
+    marginTop: 32,
+    backgroundColor: "#003366",
+    padding: 15,
+    borderRadius: 8,
     alignItems: "center",
-    borderTopWidth: 1,
-    borderColor: "#e1e1e1",
-    padding: 8,
-    backgroundColor: "#fff",
+    marginBottom: 40,
   },
-  textInput: {
-    flex: 1,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingHorizontal: 12,
-    marginHorizontal: 8,
-  },
-  sendButton: {
-    backgroundColor: "#2e86de",
-    padding: 10,
-    borderRadius: 20,
-  },
-  iconButton: {
-    padding: 6,
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
   },
 });

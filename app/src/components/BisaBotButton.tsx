@@ -1,16 +1,23 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 const BisaBotButton = () => {
+  const router = useRouter();
   return (
-    <TouchableOpacity style={styles.button}>
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {
+        router.push("/screen/chatbot");
+      }}
+    >
       {/* Chat Icon */}
-      <View style={styles.iconWrapper}>
+      {/* <View style={styles.iconWrapper}>
         <Image
           source={require("../../../assets/images/chat.svg")}
           style={styles.icon}
           resizeMode="contain"
         />
-      </View>
+      </View> */}
 
       {/* BISAbot Text */}
       <Text style={styles.text}>BISAbot</Text>

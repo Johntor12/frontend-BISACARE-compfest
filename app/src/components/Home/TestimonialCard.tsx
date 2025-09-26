@@ -1,4 +1,45 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+type Testimonial = {
+  id?: number;
+  image?: ImageSourcePropType;
+  quote?: string;
+  author?: string;
+};
+
+const testimonials: Testimonial[] = [
+  {
+    id: 1,
+    image: require("../../../../assets/images/woman.png"),
+    quote:
+      '"Berkat bantuan asuransi, ibu saya berhasil sembuh dari stroke karena layanan operasi yang optimal."',
+    author: "Hanifah",
+  },
+];
+
+function CardItem({
+  image = require("../../../../assets/images/woman.png"),
+  quote,
+  author,
+}: Testimonial) {
+  return (
+    <View style={styles.cardContainer}>
+      <Image source={image} style={styles.image} />
+      <View style={styles.card}>
+        <View style={styles.textContainer}>
+          <Text style={styles.quote}>{quote}</Text>
+          <Text style={styles.author}>- {author}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 export default function TestimonialCard() {
   return (
@@ -7,32 +48,15 @@ export default function TestimonialCard() {
       <Text style={styles.subtitle}>
         Di saat sulit, perlindungan bukan cuma janji. Ini buktinya.
       </Text>
-
-      <View style={styles.cardRow}>
-        <View style={styles.card}>
-          <Image
-            source={require("../../../../assets/images/woman.png")}
-            style={styles.image}
-          />
-          <Text style={styles.quote}>
-            “Berkat bantuan asuransi, ibu saya berhasil sembuh dari stroke
-            karena layanan operasi yang optimal.”
-          </Text>
-          <Text style={styles.author}>- Hanifah</Text>
-        </View>
-
-        <View style={styles.card}>
-          <Image
-            source={require("../../../../assets/images/woman.png")}
-            style={styles.image}
-          />
-          <Text style={styles.quote}>
-            “Berkat bantuan asuransi, ibu saya berhasil sembuh dari stroke
-            karena layanan operasi yang optimal.”
-          </Text>
-          <Text style={styles.author}>- Hanifah</Text>
-        </View>
-      </View>
+      {testimonials.map((item) => (
+        <CardItem
+          key={item.id}
+          id={item.id}
+          image={item.image}
+          quote={item.quote}
+          author={item.author}
+        />
+      ))}
     </View>
   );
 }
@@ -53,31 +77,44 @@ const styles = StyleSheet.create({
   },
   cardRow: {
     flexDirection: "row",
-    gap: 12,
   },
+  cardContainer: { flexDirection: "row", gap: 0, marginBottom: 32 },
   card: {
     flex: 1,
+    flexDirection: "row",
     backgroundColor: "#fff",
-    flexDirection: "column",
-    borderRadius: 12,
-    padding: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
     borderWidth: 1,
     borderColor: "#E0E0E0",
+    maxWidth: 152,
+    alignItems: "center", // ⬅️ ini bikin isi card center vertikal
+    justifyContent: "center",
   },
   image: {
-    width: "100%",
-    height: 120,
-    borderRadius: 8,
-    marginBottom: 8,
+    width: 110,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  textContainer: {
+    flex: 1,
+    maxWidth: "60%",
+    alignItems: "center",
+    justifyContent: "center", // ⬅️ teks biar rata tengah vertikal
   },
   quote: {
-    fontSize: 13,
+    width: 100,
+    fontSize: 12,
     fontStyle: "italic",
-    marginBottom: 4,
+    marginBottom: 8,
+    textAlign: "center",
+    flexWrap: "wrap",
+    color: "#000",
   },
   author: {
-    fontSize: 12,
-    color: "#333",
+    fontSize: 13,
+    color: "#555",
+    fontStyle: "italic",
     textAlign: "right",
   },
 });

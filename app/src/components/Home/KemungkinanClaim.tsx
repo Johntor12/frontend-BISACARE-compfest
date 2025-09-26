@@ -1,109 +1,89 @@
+// src/components/KemungkinanClaim.tsx
 import { StyleSheet, Text, View } from "react-native";
 import Colors from "../../constants/Colors";
 
-interface KemungkinanHeaderProps {
-  percentage?: number;
-  dapatDiklaim?: boolean;
+interface PolisItem {
+  label: string;
+  status: "green" | "yellow" | "red";
 }
 
-interface KemungkinanDiagnosisProps {
-  kemungkinanDiagnosis?: string;
-  polisMenanggung?: { label: string; color: string; icon?: string }[];
+interface ClaimData {
+  percentage: number;
+  dapatDiklaim: boolean;
+  kemungkinanDiagnosis: string;
+  polisMenanggung: PolisItem[];
 }
 
-function KemungkinanHeader({
-  percentage = 80,
-  dapatDiklaim = true,
-}: KemungkinanHeaderProps) {
+export default function KemungkinanClaim({ data }: { data: ClaimData }) {
+  const getStatusIcon = (status: "green" | "yellow" | "red") => {
+    switch (status) {
+      case "green":
+        return { icon: "🟢", color: "green" };
+      case "yellow":
+        return { icon: "🟡", color: "orange" };
+      case "red":
+        return { icon: "🔴", color: "red" };
+      default:
+        return { icon: "⚪", color: "black" };
+    }
+  };
+
   return (
-    <View style={styles.kemungkinanHeaderCard}>
-      <Text style={styles.kemungkinanHeaderText}>
-        {percentage}% Kemungkinan Kondisimu
-      </Text>
-      {dapatDiklaim ? ( 
-        <Text style={styles.kemungkinanHeaderDapatDiklaim}>Dapat Diklaim</Text>
-      ) : (
-        <Text style={styles.kemungkinanHeaderDapatDiklaim}>
-          Tidak Dapat Diklaim
+    <View style={styles.container}>
+      <View style={styles.headerCard}>
+        <Text style={styles.headerText}>
+          {data.percentage}% Kemungkinan Kondisimu
         </Text>
-      )}
-    </View>
-  );
-}
-
-function KemungkinanDiagnosis({
-  kemungkinanDiagnosis = "Infeksi saluran pernapasan atas / Faringitis",
-  polisMenanggung = [
-    { label: "Konsultasi Dokter Umum", color: "green" },
-    { label: "Obat demam & batuk", color: "green" },
-    { label: "Tes Lab Dasar", color: "yellow" },
-    { label: "Rawat Inap", color: "red" },
-  ],
-}: KemungkinanDiagnosisProps) {
-  return (
-    <View style={styles.kemungkinanDignosisCard}>
-      <Text style={styles.kemungkinanDiagnosisText}>
-        Kemungkinan Diagnosis:
-      </Text>
-      <Text style={styles.kemungkinanDiagnosisText}>
-        {kemungkinanDiagnosis}
-      </Text>
-      <Text>Polis Kamu Menanggung:</Text>
-      {polisMenanggung.map((item, index) => (
-        <Text key={index} style={[styles.polisItem, { color: item.color }]}>
-          {item.label}
+        <Text style={styles.headerClaimable}>
+          {data.dapatDiklaim ? "Dapat Diklaim" : "Tidak Dapat Diklaim"}
         </Text>
-      ))}
-    </View>
-  );
-}
+      </View>
 
-export default function KemungkinanClaim() {
-  return (
-    <View style={styles.kemungkinanClaimSection}>
-      <KemungkinanHeader percentage={80} dapatDiklaim={true} />
-      <KemungkinanDiagnosis />
+      <View style={styles.diagnosisCard}>
+        <Text style={styles.diagnosisTitle}>Kemungkinan Diagnosis:</Text>
+        <Text style={styles.diagnosisText}>{data.kemungkinanDiagnosis}</Text>
+
+        <Text>📄 Polis Kamu Menanggung:</Text>
+        {data.polisMenanggung.map((item, index) => {
+          const { icon, color } = getStatusIcon(item.status);
+          return (
+            <Text key={index} style={[styles.polisItem, { color }]}>
+              {icon} {item.label}
+            </Text>
+          );
+        })}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  kemungkinanClaimSection: {
-    flexDirection: "column",
-    gap: 12,
-  },
-
-  kemungkinanHeaderCard: {
+  container: { flexDirection: "column", gap: 12 },
+  headerCard: {
     width: "100%",
     backgroundColor: Colors.white,
-    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    aspectRatio: 356 / 84,
     padding: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: Colors.primaryBlue700,
+    marginTop: 12,
   },
-  kemungkinanHeaderText: {
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  kemungkinanHeaderDapatDiklaim: {
+  headerText: { fontWeight: "bold", fontSize: 20 },
+  headerClaimable: {
     fontWeight: "bold",
     fontSize: 22,
-    color: "#3737FA",
+    color: Colors.primaryBlue700,
   },
-  kemungkinanDignosisCard: {
-    flexDirection: "column",
+  diagnosisCard: {
     padding: 12,
     backgroundColor: Colors.white,
     borderRadius: 8,
+    borderColor: Colors.primaryBlue700,
+    borderWidth: 2,
   },
-  kemungkinanDiagnosisText: {
-    flexDirection: "column",
-    gap: 12,
-    fontSize: 16,
-    marginBottom: 12,
-  },
-  polisItem: {
-    fontSize: 14,
-  },
+  diagnosisTitle: { fontWeight: "bold", fontSize: 16, marginBottom: 6 },
+  diagnosisText: { fontSize: 16, marginBottom: 12 },
+  polisItem: { fontSize: 14, marginVertical: 2 },
 });

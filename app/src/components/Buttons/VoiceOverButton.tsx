@@ -1,114 +1,228 @@
-import Voice from "@react-native-voice/voice";
-import React, { useState } from "react";
+import { useKeluhan } from "@/app/context/KeluhanContext";
+import { Audio } from "expo-av";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import Colors from "../../constants/Colors";
 
-export default function VoiceOverButton() {
-  const [isRecording, setIsRecording] = useState(false);
-  const [textInputValue, setTextInputValue] = useState("Input...");
+interface VoiceOverButtonProps {
+  onResult?: (text: string) => void;
+}
 
-  // Start recording function
+export default function VoiceOverButton({ onResult }: VoiceOverButtonProps) {
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const [audioUri, setAudioUri] = useState<string | null>(null);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [waveform, setWaveform] = useState<number[]>([]);
+
+  const { keluhan, setKeluhan } = useKeluhan();
+
+  const API_AI_URL = process.env.AI_API_URL;
+
   const startRecording = async () => {
     try {
-      Voice.start("en-US"); // Mulai perekaman suara dengan bahasa yang diinginkan
-      setIsRecording(true);
-    } catch (error) {
-      console.log("Error starting voice recognition: ", error);
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+    } catch (err) {
+      console.error("Failed to start recording:", err);
     }
   };
 
-  // Stop recording function
-  const stopRecording = async () => {
+  const uploadToAI = async (uri: string) => {
     try {
-      Voice.stop(); // Stop recording
-      setIsRecording(false);
-    } catch (error) {
-      console.log("Error stopping voice recognition: ", error);
+      const apiUrl = `${process.env.API_AI_URL}/transcribe`;
+
+      const formData = new FormData();
+      formData.append("file", {
+        audioUri,
+        type: "audio/wav",
+        name: "recording.wav",
+      } as any);
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gagal upload: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Hasil AI:", data);
+
+      // return text transkrip dari AI
+      return data.text;
+    } catch (err) {
+      console.error("Upload gagal:", err);
+      throw err;
     }
   };
 
-  // // Function to handle the result from voice recognition
-  // const onSpeechResults = (e: any) => {
-  //   const result = e.value[0]; // Ambil teks pertama dari hasil suara
-  //   setTextInputValue(result); // Set input form dengan teks yang dikenali
-  // };
+  const stopRecording = async () => {
+    if (!recording) return;
 
-  // useEffect(() => {
-  //   // Add event listener for voice recognition results
-  //   Voice.onSpeechResults = onSpeechResults;
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    setAudioUri(uri || null);
 
-  //   return () => {
-  //     // Clean up listeners
-  //     Voice.removeAllListeners();
-  //   };
-  // }, []);
+    if (uri) {
+      try {
+        const text = await uploadToAI(uri);
+        setKeluhan(text); // hasil transkrip isi ke input keluhan
+      } catch (e) {
+        console.log("Error Gagal mengirim Audio ke AI", e);
+      }
+    }
 
-  // Handle "Cek Tanggapan" button press
-  const handleTanggapan = () => {
-    console.log("Tanggapan: ", textInputValue);
-    // Anda bisa menambahkan logika untuk mengirim tanggapan atau memprosesnya lebih lanjut.
+    // Dummy waveform generator (simulasi)
+    const dummyData = Array.from(
+      { length: 80 },
+      (_, i) => Math.sin(i / 5) * 40 + 50 + Math.random() * 10
+    );
+    setWaveform(dummyData);
+
+    setRecording(null);
+  };
+
+  const playPauseAudio = async () => {
+    if (!audioUri) return;
+
+    if (sound && isPlaying) {
+      await sound.pauseAsync();
+      setIsPlaying(false);
+    } else if (sound && !isPlaying) {
+      const status = await sound.getStatusAsync();
+      if (
+        status.isLoaded &&
+        status.positionMillis >= (status.durationMillis || 0)
+      ) {
+        await sound.replayAsync(); // mulai dari awal lagi
+      } else {
+        await sound.playAsync();
+      }
+      setIsPlaying(true);
+    } else {
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        { uri: audioUri },
+        { shouldPlay: true }
+      );
+      setSound(newSound);
+      setIsPlaying(true);
+
+      newSound.setOnPlaybackStatusUpdate((status) => {
+        if (!status.isLoaded) return;
+        if (status.didJustFinish) {
+          setIsPlaying(false);
+        }
+      });
+    }
+  };
+
+  // ---- Convert waveform data -> Smooth Path ----
+  const getSmoothPath = (data: number[], width = 320, height = 100) => {
+    if (data.length === 0) return "";
+    const step = width / (data.length - 1);
+    let d = `M 0 ${height - data[0]}`;
+    for (let i = 1; i < data.length; i++) {
+      const x = i * step;
+      const y = height - data[i];
+      const prevX = (i - 1) * step;
+      const prevY = height - data[i - 1];
+      const cpx = (prevX + x) / 2; // control point (Bezier)
+      d += ` Q ${cpx} ${prevY}, ${x} ${y}`;
+    }
+    return d;
   };
 
   return (
     <View>
+      {/* Button Record */}
       <Pressable
-        style={styles.voiceoverButton}
-        onPress={isRecording ? stopRecording : startRecording}
+        style={styles.VoiceOverButton}
+        onPress={recording ? stopRecording : startRecording}
       >
         <Text style={styles.voiceoverText}>
-          {isRecording ? "Stop VoiceOver" : "Gunakan VoiceOver"}
+          {recording ? "Stop Recording" : "Gunakan VoiceOver"}
         </Text>
       </Pressable>
-      {/* TextInput untuk memasukkan hasil VoiceOver */}
+
+      {/* Media Player & Waveform */}
+      {audioUri && (
+        <View style={{ marginVertical: 16, alignItems: "center" }}>
+          {/* Waveform Visualizer (dummy sine wave) */}
+          <Svg height="100" width="320">
+            <Path
+              d={getSmoothPath(waveform, 320, 100)}
+              fill="#ff00ff"
+              stroke={Colors.primaryBlue700}
+              strokeWidth={2}
+            />
+          </Svg>
+
+          <Pressable
+            onPress={playPauseAudio}
+            style={[styles.playButton, { marginTop: 12 }]}
+          >
+            <Text style={styles.voiceoverText}>{isPlaying ? "⏸" : " ▶"}</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {/* Input */}
       <TextInput
         style={styles.textInput}
-        value={textInputValue}
-        onChangeText={setTextInputValue}
+        placeholder="Input..."
+        value={keluhan}
+        onChangeText={setKeluhan}
       />
-
-      {/* Tombol Cek Tanggapan */}
-      <Pressable style={styles.cekTanggapanButton} onPress={handleTanggapan}>
-        <Text style={styles.cekTanggapanButtonText}>Cek Tanggapan</Text>
-      </Pressable>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  voiceoverButton: {
-    display: "flex",
+  VoiceOverButton: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primaryBlue700,
     width: 177,
     aspectRatio: 177 / 36,
     borderRadius: 12,
+    marginBottom: 12,
   },
-  cekTanggapanButton: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: Colors.primary,
-    width: 177,
-    aspectRatio: 177 / 36,
-    borderRadius: 12,
-  },
-  cekTanggapanButtonText: {
+  voiceoverText: {
     color: "white",
   },
-  textInput: {
+  playButton: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.primaryBlue700,
+    width: 75,
+    aspectRatio: 1,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  textInput: {
     backgroundColor: "white",
     padding: 16,
     width: "100%",
     aspectRatio: 366 / 237,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "EBE0FF",
-    fontWeight: "medium",
-  },
-  voiceoverText: {
-    color: "white",
+    borderColor: "#EBE0FF",
+    marginVertical: 12,
   },
 });

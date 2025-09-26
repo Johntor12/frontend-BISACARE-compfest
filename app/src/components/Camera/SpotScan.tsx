@@ -1,16 +1,18 @@
+import { Feather } from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
 import {
   Button,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import Modal from "../Modal";
 
 interface SpotScanProps {
   onScan: (uri: string) => void;
@@ -34,10 +36,11 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
+  const { returnTo } = useLocalSearchParams<{ returnTo?: string }>();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
@@ -85,11 +88,66 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
   };
 
   const handleLanjut = () => {
-    router.push("/screen/tunjukkan-slip")
-  }
+    if (capturedImage) {
+      if (returnTo) {
+        router.replace({
+          pathname: returnTo,
+          params: { imageUri: capturedImage },
+        } as any);
+      } else {
+        router.back();
+      }
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <View style={styles.spotScanContainer}>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <View
+            style={{
+              width: 45,
+              aspectRatio: 1,
+              backgroundColor: "#E3E8EF",
+              borderRadius: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 8,
+            }}
+          >
+            <Entypo name="cross" size={24} color="black" />
+          </View>
+          <Text
+            style={{
+              color: "#000",
+              fontWeight: "bold",
+              fontSize: 20,
+            }}
+          >
+            SpotScan
+          </Text>
+          <View
+            style={{
+              width: 45,
+              aspectRatio: 1,
+              backgroundColor: "#E3E8EF",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "100%",
+              padding: 8,
+            }}
+          >
+            <Feather name="alert-circle" size={24} color="black" />
+          </View>
+        </View>
+      </View>
       {/* Kamera */}
       <CameraView
         barcodeScannerSettings={{
@@ -116,11 +174,23 @@ const SpotScan = ({ onScan, onUpload }: SpotScanProps) => {
           <Text style={styles.imageText}>Captured Image:</Text>
           <Image source={{ uri: capturedImage }} style={styles.image} />
           <TouchableOpacity style={styles.button} onPress={handleLanjut}>
-          <Text style={styles.buttonText}>Lanjut</Text>
-        </TouchableOpacity>
+            <Text style={styles.buttonText}>Lanjut</Text>
+          </TouchableOpacity>
         </View>
       )}
-    </SafeAreaView>
+      {showModal && (
+        <Modal
+          title="Status Anda Pengguna Aktif"
+          visible={showModal}
+          falseText="Kembali"
+          trueText="Lanjut Proses"
+          onClose={() => {
+            setShowModal(false);
+          }}
+          onTrue={() => {}}
+        ></Modal>
+      )}
+    </View>
   );
 };
 
@@ -128,6 +198,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
+  },
+  spotScanContainer: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    justifyContent: "space-between",
+    alignItems: "center",
+    zIndex: 20,
+    flexDirection: "row",
+    backgroundColor: "#FFF",
+    aspectRatio: 414 / 132,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
   camera: {
     flex: 1,
@@ -141,7 +224,7 @@ const styles = StyleSheet.create({
   },
   frameContainer: {
     position: "absolute",
-    top: "10%",
+    top: "20%",
     left: "10%",
     right: "10%",
     bottom: "10%",
@@ -179,12 +262,16 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#FFFBFF",
     borderTopRightRadius: 8,
     borderTopLeftRadius: 8,
     padding: 20,
   },
   button: {
+    width: 140,
+    aspectRatio: 154 / 60,
     backgroundColor: "#005D85",
     paddingVertical: 10,
     paddingHorizontal: 20,

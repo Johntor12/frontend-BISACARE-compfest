@@ -1,12 +1,18 @@
 // src/components/ClaimDetail/FloatingChat.tsx
+import { useRouter } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Colors from "../../constants/Colors";
 
 export default function FloatingChat() {
+  const router = useRouter();
+
   return (
     <View style={styles.wrap}>
       <Pressable
         style={({ pressed }) => [styles.btn, pressed && { opacity: 0.85 }]}
+        onPress={() => {
+          router.push("/screen/chatbot");
+        }}
       >
         <Text style={styles.icon}>💬</Text>
         <Text style={styles.label}>BISAbot</Text>
@@ -16,7 +22,7 @@ export default function FloatingChat() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: "absolute", bottom: 22, right: 16 },
+  wrap: { bottom: 32, alignItems: "flex-end" },
   btn: {
     flexDirection: "row",
     alignItems: "center",
@@ -33,5 +39,5 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   icon: { fontSize: 16 },
-  label: { color: Colors.primary, fontWeight: "800" },
+  label: { color: Colors.primary500, fontWeight: "800" },
 });

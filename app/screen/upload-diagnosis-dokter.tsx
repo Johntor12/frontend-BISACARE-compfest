@@ -1,39 +1,38 @@
 import { useRouter } from "expo-router";
-import React from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import VoiceOverButton from "../src/components/Buttons/VoiceOverButton";
+import UploadFile from "../src/components/Home/UploadFile";
+import ScreenContainer from "../src/components/ScreenContainer";
 
 const UploadDiagnosisDokter = () => {
   const router = useRouter();
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <ScreenContainer scrollable={true}>
+      <Text style={styles.title}>Berikan/Upload hasil Diagnosis Dokter</Text>
+      <Text style={styles.subTitle}>
+        Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
+        ditanggung oleh asuransi.
+      </Text>
+      <UploadFile namaFile="Hasil diagnosis Dokter"></UploadFile>
 
-      <View style={{ padding: 16 }}>
-        <Text style={styles.title}>Berikan/Upload hasil Diagnosis Dokter</Text>
-        <View style={styles.uploadBox}>
-          <Text style={{ color: "gray" }}>+ Upload File</Text>
-        </View>
+      <Text style={styles.title}>Tuliskan Diagnosis Dokter</Text>
 
-        <Text style={styles.title}>Tuliskan Diagnosis Dokter</Text>
-        <TextInput
-          placeholder="Tulis di sini..."
-          style={styles.textarea}
-          multiline
-        />
+      <VoiceOverButton />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/screen/daftar-rumah-sakit")}
-        >
-          <Text style={styles.buttonText}>Cek Tanggapan</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/screen/chatbot")}
+      >
+        <Text style={styles.buttonText}>Cek Tanggapan</Text>
+      </TouchableOpacity>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  title: { fontWeight: "bold", marginVertical: 10 },
+  title: { fontSize: 20, fontWeight: "bold", marginVertical: 6 },
+  subTitle: { fontSize: 12 },
   uploadBox: {
     borderWidth: 1,
     borderColor: "#ccc",
@@ -54,12 +53,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#0D3B66",
     padding: 15,
     borderRadius: 10,
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 40,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
-  }
+  },
 });
 
 export default UploadDiagnosisDokter;

@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import RumahSakitCard from "../src/components/Registration/RumahSakitCard";
+import ScreenContainer from "../src/components/ScreenContainer";
 
 const DATA_RS = [
   {
@@ -23,24 +25,127 @@ const DATA_RS = [
     phone: "(0274) 2800808",
     image: require("../../assets/images/rumah_sakit_image.png"),
   },
+  {
+    id: "4",
+    name: "RS. Hermanto",
+    hours: "Open 24 Hours",
+    phone: "(0274) 2800808",
+    image: require("../../assets/images/rumah_sakit_image.png"),
+  },
+  {
+    id: "5",
+    name: "RS. Herman H. N.",
+    hours: "Open 24 Hours",
+    phone: "(0274) 2800808",
+    image: require("../../assets/images/rumah_sakit_image.png"),
+  },
 ];
 
+const fetchRumahSakit = async (bodyParams: any) => {
+  // Simulasi delay API
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve([
+        {
+          id: "1",
+          name: "RS. Harapan Sehat",
+          hours: "Open 24 Hours",
+          phone: "(021) 123456",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+        {
+          id: "2",
+          name: "RS. Kasih Ibu",
+          hours: "Open 24 Hours",
+          phone: "(021) 654321",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+        {
+          id: "3",
+          name: "RS. Bhakti Mulia",
+          hours: "Open 24 Hours",
+          phone: "(021) 778899",
+          image: require("../../assets/images/rumah_sakit_image.png"),
+        },
+      ]);
+    }, 1000); // 1 detik delay
+  });
+};
+
 export default function PilihRumahSakit() {
+  const [rumahSakit, setRumahSakit] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // const API_URL = process.env.AI_API_URL;
+
+  // useEffect(() => {
+  //   const bodyParams = {
+  //     nama: "Budi",
+  //     kelurahan_desa: "Kelapa Dua",
+  //     kecamatan: "Cengkareng",
+  //     jenis_layanan: "Rawat Jalan",
+  //     keluhan: "Demam tinggi",
+  //     nama_asuransi: "BPJS",
+  //     nama_provinsi: "DKI Jakarta",
+  //     nama_daerah: "Jakarta Barat",
+  //     top_n: 5,
+  //   };
+
+  //   const fetchRumahSakit = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const response = await fetch(`${API_URL}/rekomendasi-rumah-sakit`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(bodyParams),
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error(`Error status: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("Hasil dari API:", data);
+
+  //       // pastikan data berupa array rumah sakit
+  //       setRumahSakit(data || []);
+  //     } catch (error) {
+  //       console.error("Gagal fetch rumah sakit:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchRumahSakit();
+  // }, []);
+
+  // Filter pencarian
+  const filteredData = rumahSakit.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <View style={styles.container}>
+    <ScreenContainer scrollable={false}>
       {/* Header */}
-      <Text style={styles.subHeaderText}>
-        Pilih Rumah Sakit yang Menerima Asuransi
-      </Text>
+      <View style={{ flexDirection: "row" }}>
+        <Text style={styles.headerText}>Pilih Rumah Sakit</Text>
+        <Text style={styles.subHeaderText}> yang </Text>
+      </View>
+      <Text style={styles.subHeaderText}>Menerima Asuransi</Text>
       <Text style={styles.descText}>
-        Ketik atau upgrade keluhanmu, dan kami bantu cek apakah kondisi kamu
-        bisa ditanggung oleh asuransi.
+        Ketik atau ucapkan keluhanmu, dan kami bantu cek apakah kondisimu bisa
+        ditanggung oleh asuransi.
       </Text>
 
       {/* Search Bar */}
       <TextInput
         style={styles.searchInput}
         placeholder="Cari Rumah Sakit..."
+        value={search}
+        onChangeText={setSearch}
       />
 
       {/* List Rumah Sakit */}
@@ -59,7 +164,7 @@ export default function PilihRumahSakit() {
         )}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
-    </View>
+    </ScreenContainer>
   );
 }
 
@@ -68,22 +173,25 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 20,
+    marginTop: -54,
+    zIndex: 10,
+    borderTopLeftRadius: 12,
+    borderTopEndRadius: 12,
     backgroundColor: "#F4F8FB",
   },
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#0077B6",
+    color: "#000",
   },
   subHeaderText: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "400",
     color: "#000",
   },
   descText: {
     marginTop: 4,
-    fontSize: 14,
+    fontSize: 12,
     color: "#666",
   },
   searchInput: {

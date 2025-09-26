@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 
 const SelamatMenjalaniPemeriksaan = () => {
